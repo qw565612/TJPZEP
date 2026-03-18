@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <title>土重處土城司法園區區段徵收公共工程</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="keywords">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="description">
+    <!--以下meta目的是清除快取，以免保留舊靜態網頁-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0" />
+    <!-- Favicon -->
+    <link href="img/ico.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="css/css2.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!--  Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Customize Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        var TOKEN = '';
+        var U_Permit = '';
+
+        $(document).ready(function () {
+            let s = location.href;
+            sessionStorage.setItem("myURL", s);
+
+            var chkURL = sessionStorage.getItem("chkURL");
+            var url = parent.document.URL;
+
+            if (chkURL == null) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+            if (url != chkURL) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+
+            initControll();
+            getGalleryData('MEETING');
+        })
+
+        function initControll()
+        { }
+
+        function getGalleryData(GALLERY_TYPE) {
+            var dataOpener = "";
+
+            var selectYear = $('#selectYear').val();
+            var selectMonth = $('#selectMonth').val();
+
+            var FUN_NAME = "GALLERY_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"-999","GALLERY_TYPE":"' + GALLERY_TYPE + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                //url: 'https://tjpzep.sinotech.com.tw/SERVICE_TJPZEP/service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+
+                            var IDX = obj.IDX;
+                            var GALLERY_TILTE = obj.GALLERY_TILTE;
+                            var GALLERY_TEXT = obj.GALLERY_TEXT;
+
+                            var GALLERY_NO = obj.GALLERY_NO;
+                            var GALLERY_DATE = obj.GALLERY_DATE.replace('T00:00:00', '');;
+
+
+                            var MyDate = new Date(GALLERY_DATE);
+                            var year = MyDate.getFullYear();
+                            var month = MyDate.getMonth()+1;
+                            var day = MyDate.getDate();
+                             
+                            if (selectYear != "ALL" && year != selectYear)
+                            { return; }
+
+                            if (selectMonth != "ALL" && month != selectMonth) {
+                                return;
+                            }
+                           
+
+                            let indexNO = NOs.indexOf(GALLERY_NO);
+
+                            if (indexNO < 0) {
+                                i += 1;
+                                dataOpener +=
+                                "<div class='accordion-item' id='pic" + i.toString() + "'> " +
+                                "  <h2 class='accordion-header' id='panelsStayOpen-heading" + i.toString() + "'>" +
+                                "    <button class='accordion-button py-1 bg-primary' type='button' data-bs-toggle='collapse' data-bs-target='#panelsStayOpen-collapse" + i.toString() + "' aria-expanded='true' aria-controls='panelsStayOpen-collapse1'>" +
+                                "        <p class='date me-2'>" + GALLERY_DATE + "</p><h5 class='my-1 text-white'>" + GALLERY_TILTE + "</h5>" +
+                                "    </button>" +
+                                "  </h2>" +
+                                "  <div id='panelsStayOpen-collapse" + i.toString() + "' class='accordion-collapse collapse show' aria-labelledby='panelsStayOpen-heading" + i.toString() + "'>" +
+                                "    <div class='accordion-body'>" +
+                                "       <div class='row gy-2'>";
+
+                                var dataImage = "";
+                                $.each(dataArray.Data, function (idx2, obj2) {
+                                    var GALLERY_NO_2 = obj2.GALLERY_NO;
+                                    var GALLERY_FILE_NAME_2 = obj2.GALLERY_FILE_NAME;
+                                    var GALLERY_FILE_TITLE_2 = obj2.GALLERY_FILE_TITLE;
+
+                                    if (GALLERY_NO == GALLERY_NO_2) {
+                                        dataImage += "<img class='col-sm-3' src='photo/" + GALLERY_FILE_NAME_2 + "' alt='" + GALLERY_FILE_TITLE_2 + "'>";
+                                    }
+                                });
+
+                                dataOpener += dataImage +
+                                "       </div>" +
+                                "    </div>" +
+                                " </div>" +
+                                "</div>";
+
+                                NOs.push(GALLERY_NO);
+                            }
+
+
+                        });
+                        $('#accordionPanelsStayOpenExample').html(dataOpener);
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+        function cmd_Q()
+        {
+            getGalleryData('MEETING');
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid mt-3 mb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 wow zoomIn" data-wow-delay="0.1s">
+                    <h2>會議影像</h2>
+                    <!--查詢bar-->
+                    <div class="row g-3 align-items-center mb-5">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">選擇年份</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" aria-label=".form-select-lg" id="selectYear">
+                                <option value="ALL" selected>全選</option>
+                                <option value="2024">2024年</option>
+                                <option value="2023">2023年</option>
+                                <option value="2022">2022年</option>
+                                <option value="2021">2021年</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">選擇月份</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" aria-label=".form-select-lg" id="selectMonth">
+                                <option value="ALL" selected>全選</option>
+                                <option value="12">12月</option>
+                                <option value="11">11月</option>
+                                <option value="10">10月</option>
+                                <option value="9">9月</option>
+                                <option value="8">8月</option>
+                                <option value="7">7月</option>
+                                <option value="6">6月</option>
+                                <option value="5">5月</option>
+                                <option value="4">4月</option>
+                                <option value="3">3月</option>
+                                <option value="2">2月</option>
+                                <option value="1">1月</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary" onclick="cmd_Q()">查詢</button>
+                        </div>
+                    </div>
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <!--accordion 按鈕+內容區塊1-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner End -->
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/twentytwenty/jquery.event.move.js"></script>
+    <script src="lib/twentytwenty/jquery.twentytwenty.js"></script>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

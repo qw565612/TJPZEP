@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <!--https://www.vrsofttech.com/css/how-to-set-a4-page-size-for-print-using-css-->
+    <script type="text/javascript">
+        function Save()
+        { window.print(); }
+
+        function changeTextVal(obj) {
+            var myVal = $(obj).val();
+            $(obj).attr("value", myVal);
+            //$(obj).val(myVal);
+        }
+        function changeCheckbox(obj) {
+            var myVal = $(obj).prop('checked');
+            if (myVal == true) {
+                $(obj).attr("checked", "checked");
+            } else {
+                $(obj).removeAttr('checked');
+            }
+        }
+
+        $(document).ready(function () {
+            $('#saveMemory').click(function (e) {
+                //e.preventDefault();
+
+                var content = $('#formContainer').html(); // orig
+
+                alert(content);
+
+                $('#formContainer').html(content);
+
+                //$.ajax({
+                //    type: 'POST',
+                //    url: 'readInput.php',
+                //    data: { id: content, writeInput: $('#writeInput').val() }
+                //    //dataType: "html" // test
+                //}).done(
+                //            function (data) {
+                //                $('#result').html(data);
+                //            }
+                //      );
+            });
+        });
+    </script>
+    <style>
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            border: 1px #D3D3D3 solid;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        /*body {
+            background: rgb(204,204,204);
+        }
+
+        page {
+            background: white;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 0.5cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+
+            page[size="A4"] {
+                width: 21cm;
+                height: 29.7cm;
+            }
+
+                page[size="A4"][layout="portrait"] {
+                    width: 29.7cm;
+                    height: 21cm;
+                }
+            */
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="formContainer" class="page" style="display:block;">
+
+        <table style="border-collapse: collapse; width: 100%;" border="1">
+            <tbody>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                    <td style="width: 9.98629%; height: 18px;">&nbsp;</td>
+                    <td style="width: 54.705%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                    <td style="width: 9.98629%; height: 126px;" rowspan="7">&nbsp;</td>
+                    <td style="width: 54.705%; height: 126px;" rowspan="7">
+                        <div style="display: flex; flex-direction: row;"><input id="chk_001" name="scales" type="checkbox" onclick="changeCheckbox(this)" />人行步道：<input id="input_001" style="border: 0; outline: 0; background: transparent; border-bottom: 1px solid black;" type="text" onchange="changeTextVal(this)" />(m)</div>
+                        <div style="display: flex; flex-direction: row;"><input id="chk_002" name="scales" type="checkbox" onclick="changeCheckbox(this)" />自行車道：<input id="input_002" style="border: 0; outline: 0; background: transparent; border-bottom: 1px solid black;" type="text" onchange="changeTextVal(this)" />(m)</div>
+                    </td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                    <td style="width: 9.98629%; height: 18px;">&nbsp;</td>
+                    <td style="width: 54.705%; height: 18px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 18px;">
+                    <td style="width: 12.5926%; height: 18px;">&nbsp;</td>
+                    <td style="width: 15.7476%; height: 18px;">&nbsp;</td>
+                    <td style="width: 6.96844%; height: 18px;">&nbsp;</td>
+                    <td style="width: 9.98629%; height: 18px;">&nbsp;</td>
+                    <td style="width: 54.705%; height: 18px;">&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <input type="button" id="saveMemory" value="確定" />
+    <input type="button" id="PRINT" value="RINT" />
+</body>
+</html>

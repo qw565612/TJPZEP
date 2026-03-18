@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>土重處土城司法園區區段徵收公共工程</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="keywords">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="description">
+    <!--以下meta目的是清除快取，以免保留舊靜態網頁-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0" />
+    <!-- Favicon -->
+    <link href="img/ico.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="css/css2.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!--  Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Customize Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            let s = location.href;
+            sessionStorage.setItem("chkURL", s);
+
+            $('#mask_Query').fadeIn(200);
+            $('#fm_contain').on('load', function () {
+                var content = document.getElementById("fm_contain");
+                content.style.width = ''; content.style.height = '';
+                resizeIframe(content);
+
+            });
+        })
+        /*後-網頁載入完成之後*/
+        window.onload = function () {
+
+            if (sessionStorage.getItem("myURL") == null) {
+              
+                setContain("default");
+            }
+            else if (sessionStorage.getItem("myURL") != 'NotSet') { 
+                var src = sessionStorage.getItem("myURL")
+                $('#fm_contain').attr("src", src);
+            }
+
+            else { 
+                setContain("default");
+            }
+        }
+
+        function setContain(fun) {
+            sessionStorage.setItem("myURL", 'NotSet');
+
+            $('#mask_Query').fadeIn(200);
+            var t = Date.now();
+
+            switch (fun) {
+
+                case 'default':
+                    var src = "./tjpzep_00_default.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'new':
+                    var src = "./tjpzep_01_news.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'origin':
+                    var src = "./tjpzep_02_origin.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'about':
+                    var src = "./tjpzep_03_about.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'eco':
+                    var src = "./tjpzep_031_eco.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'chart':
+                    var src = "./tjpzep_04_chart.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'gallery':
+                    var src = "./tjpzep_05_gallery.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'mgallery':
+                    var src = "./tjpzep_051_mgallery.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'pgallery':
+                    var src = "./tjpzep_052_pgallery.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'agallery':
+                    var src = "./tjpzep_053_agallery.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                case 'contact':
+                    var src = "./tjpzep_06_contact.html?t=" + t
+                    $('#fm_contain').attr("src", src);
+                    break;
+                default:
+                    alert("系統開發中");
+                    break;
+            }
+
+        }
+
+
+        var TargetScrollHeigth = 0;
+        function resizeIframe(obj) {
+            //obj.style.width = ''; obj.style.height = '';
+            obj.style.height = (obj.contentWindow.document.documentElement.scrollHeight) * 1.0 + 'px';
+            TargetScrollHeigth = (obj.contentWindow.document.documentElement.scrollHeight) * 1.0;
+            //$('#mask_Query').fadeOut(200);
+        }
+
+        /*檢查 Scrolling IS READY*/
+        var timerPageHightCheck = setInterval(function () {
+            if (TargetScrollHeigth == document.getElementById("fm_contain").scrollHeight)
+            { $('#mask_Query').fadeOut(200); }
+
+        }, 1500);
+
+        var timerPageHight = setInterval(function () {
+            var content = document.getElementById("fm_contain");
+            resizeIframe(content);
+        }, 1500);
+
+    </script>
+    <style>
+        .mask_Query {
+            z-index: 999999; /*浮在最上面*/
+            /*position: fixed;*/
+            position: absolute;
+            top: 1%;
+            /*margin-top:100px;*/
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(0,0,0,.5);
+            /*background:hsla(0,100%,80%,0.5)*/
+            background: #000;
+            opacity: 0.7;
+        }
+
+        .centered {
+            position: absolute;
+            z-index: 1000;
+            top: 50%;
+            /*top: 250px;*/
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="mask_Query" id="mask_Query">
+        <button class="centered" style="font-size: x-large; color: black">
+            <!--<img src="icon/loading.gif" />-->
+            <span class="sr-only">載入中...</span>
+        </button>
+    </div>
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-light ps-5 pe-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-6 col-sm-12 text-center text-lg-end  mb-2 mb-lg-0">
+                <div class="position-relative d-inline-flex align-items-center bg-primary text-white top-shape px-5">
+                    <div class="py-1">
+                        <small><a href="tjpzep_00_signin.html"><p class="m-0"><i class="bi bi-person-circle me-1"></i>後台管理</p></a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm px-5 py-3 py-lg-0">
+        <a class="navbar-brand p-0" onclick="setContain('default')">
+            <img src="img/logo.svg" alt="網站logo"><h1 class="d-none">土重處土城司法園區區段徵收公共工程</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0">
+                <a class="nav-item nav-link" onclick="setContain('new')">最新消息</a>
+                <a class="nav-item nav-link" onclick="setContain('origin')">計畫內容</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">執行說明</a>
+                    <div class="dropdown-menu m-0">
+                        <a class="dropdown-item" onclick="setContain('about')">分項工程</a>
+                        <a class="dropdown-item" onclick="setContain('eco')">生態檢核</a>
+                    </div>
+                </div>
+                <a class="nav-item nav-link" onclick="setContain('chart')">計畫進度</a>
+                <div class="nav-item dropdown">
+                    <a href="05_gallery.html" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">影像紀錄</a>
+                    <div class="dropdown-menu m-0">
+                        <a class="dropdown-item" onclick="setContain('gallery')">基本資料</a>
+                        <a class="dropdown-item" onclick="setContain('mgallery')">會議影像</a>
+                        <a class="dropdown-item" onclick="setContain('pgallery')">施工影像</a>
+                        <a class="dropdown-item" onclick="setContain('agallery')">空拍影像</a>
+                    </div>
+                </div>
+                <a class="nav-item nav-link" onclick="setContain('contact')">相關連結</a>
+            </div>
+            <button type="button" class="btn text-dark" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
+
+        </div>
+    </nav>
+    <!-- Banner Start -->
+
+    <iframe id="fm_contain" scrolling="no"></iframe>
+
+
+    <!-- Banner End -->
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light py-5 wow fadeInUp" data-wow-delay="0.3s">
+        <div class="container pt-2">
+            <div class="row g-5 pt-0">
+                <div class="col-lg-6">
+                    <!--<h3 class="text-white mb-4">聯絡我們</h3>-->
+                    <p class="mb-2 text-white">
+                        <i class="bi bi-person-gear text-primary me-2"></i>
+                        網站設計及維運單位：中興工程顧問股份有限公司
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <!--<h3 class="text-white mb-4"></h3>-->
+                    <!--<p class="mb-2">
+                        <i class="bi bi-buildings text-primary me-2"></i>
+                        工程委託單位：<a target="_blank" class="text-white border-bottom" href="https://www.lceb.gov.tw/">內政部土地重劃工程處</a>
+                    </p>-->
+                    <p class="mb-2"><i class="bi bi-buildings text-primary me-2"></i>工程委託單位：內政部土地重劃工程處</p>
+                    <p class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i>408205臺中市南屯區黎明路二段503號4樓</p>
+                    <p class="mb-2"><i class="bi bi-envelope-open text-primary me-2"></i>lceb@mail.lceb.gov.tw</p>
+                    <p class="mb-2"><i class="bi bi-telephone text-primary me-2"></i>04-2252-4985(代表號)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="js/fontawesome.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    /*<script src="lib/tempusdominus/js/moment-timezone.min.js"></script>*/
+    <script src="lib/twentytwenty/jquery.event.move.js"></script>
+    <script src="lib/twentytwenty/jquery.twentytwenty.js"></script>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

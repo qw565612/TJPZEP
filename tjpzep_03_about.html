@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>土重處土城司法園區區段徵收公共工程</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="keywords">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="description">
+    <!--以下meta目的是清除快取，以免保留舊靜態網頁-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0" />
+    <!-- Favicon -->
+    <link href="img/ico.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="css/css2.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!--  Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Customize Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        var TOKEN = '';
+        var U_Permit = '';
+
+        $(document).ready(function () {
+          
+            let s = location.href;
+            sessionStorage.setItem("myURL", s);
+
+             
+            var chkURL = sessionStorage.getItem("chkURL");
+            var url = parent.document.URL;
+
+            if (chkURL == null) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+            if (url != chkURL) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+
+            initControll();
+            getProjData();
+        })
+
+        function initControll() {
+
+        }
+
+        function getProjData() {
+            var dataPrj =  
+            "     <div class='col-lg-4 wow slideInUp' data-wow-delay='0.1s'> "+
+            "          <div class='section-title bg-light rounded h-100 p-5'>"+
+            "             <h1 class='display-6 mb-4'>核心理念</h1>"+
+            "              <h5 class='text-primary'>"+
+            "                  以尊重既有自然環境資源為原則，擬定工程設計構想，提出最佳綠色基盤設計方案，達到人與自然環境和諧共處，期使開發工程不論在規劃、設計、施工以及後續運轉等各階段，皆能符合綠色、韌性、永續的實質內涵要求。"+
+            "              </h5>"+
+            "          </div>" +
+            "       </div> ";
+            var dataImage = "";
+
+
+            var FUN_NAME = "PROJECT_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權 
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1"}';
+
+            $.ajax({
+                url: './service.ashx',
+                //url: 'https://tjpzep.sinotech.com.tw/SERVICE_TJPZEP/service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+
+                            var Proj_Name = obj.Proj_Name;
+                            var Proj_Text = obj.Proj_Text;
+                            var Proj_Image_Name = obj.Proj_Image_Name;
+                             
+                            i += 1;
+                            dataPrj +=
+                                  "<div class='col-lg-4 wow slideInUp' data-wow-delay='0.3s'> "+
+                                  "   <div class='team-item'>"+
+                                  "      <div class='position-relative rounded-top' style='z-index: 1;'>" +
+                                  "          <a class='btn text-dark' data-bs-toggle='modal' data-bs-target='#ModalP"+i.toString()+"'>" +
+                                  "             <img class='img-fluid rounded-top w-100' src='img/" + Proj_Image_Name + "' alt='' >" +
+                                  "          </a>"+
+                                  "          <div class='position-absolute top-100 start-50 translate-middle bg-light rounded p-2 px-3'>"+
+                                  "            <h4 class='text-center'>" + Proj_Name + "</h4>" +
+                                  "          </div>"+
+                                  "      </div>"+
+                                  "      <div class='team-text position-relative bg-light rounded-bottom p-4 h-100'>"+
+                                  "           <div class='position-relative bg-light border-bottom border-primary p-2'>" +
+                                  "               <hr class='text-primary w-50 mx-auto mt-0'>" +
+                                  "               <div class='d-flex mb-3 text-primary'><i class='fa fa-check-double pe-2'></i> "+
+                                  "                    <span>" + Proj_Text + "</span>" +
+                                  "               </div>" +
+                                  "          </div>" +
+                                  "      </div>" +
+                                  "   </div>" +
+                                  "</div>";
+
+                            dataImage +=
+                            "        <div class='modal fade' id='ModalP" + i.toString() + "' tabindex='-1'>" +
+                            "            <div class='modal-dialog'>" +
+                            "                <div class='modal-content'>" +
+                            "                    <div class='modal-header border-0'>" +
+                            "                        <button type='button' class='btn bg-white btn-close' data-bs-dismiss='modal' aria-label='Close'></button>" +
+                            "                    </div>" +
+                            "                    <div class='modal-body d-flex align-items-center justify-content-center'>" +
+                            "                        <img class='img-fluid rounded-top w-100' src='img/" + Proj_Image_Name + "' alt=''>" +
+                            "                    </div>" +
+                            "                </div>" +
+                            "            </div>" +
+                            "        </div>";
+
+
+                        });
+
+                        $('#divProjContain').html(dataPrj);
+                        $('#divProjImage').html(dataImage);
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+
+
+            
+            
+
+
+        }
+    </script>
+</head>
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+        <div class="spinner-grow text-dark m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+        <div class="spinner-grow text-secondary m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+    <!-- Full Screen Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center">
+                    <div class="input-group" style="max-width: 600px;">
+                        <input type="text" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
+                        <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Full Screen Search End -->
+    <!-- 分項工程 Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="row">
+                <h2>分項工程</h2>
+                <div class="row" id="divProjContain">
+                    <div class="col-lg-4 wow slideInUp" data-wow-delay="0.1s">
+                        <div class="section-title bg-light rounded h-100 p-5">
+                            <h1 class="display-6 mb-4">核心理念</h1>
+                            <h5 class="text-primary">
+                                以尊重既有自然環境資源為原則，擬定工程設計構想，提出最佳綠色基盤設計方案，達到人與自然環境和諧共處，期使開發工程不論在規劃、設計、施工以及後續運轉等各階段，皆能符合綠色、韌性、永續的實質內涵要求。
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
+                        <div class="team-item">
+                            <div class="position-relative rounded-top" style="z-index: 1;">
+                                <a class="btn text-dark" data-bs-toggle="modal" data-bs-target="#ModalP01">
+                                    <img class="img-fluid rounded-top w-100" src="img/A整地工程-.jpg" alt="">
+                                </a>
+                                <div class="position-absolute top-100 start-50 translate-middle bg-light rounded p-2 px-3">
+                                    <h4 class="text-center">整地工程</h4>
+                                </div>
+                            </div>
+                            <div class="team-text position-relative bg-light rounded-bottom p-4 h-100">
+                                <div class="position-relative bg-light border-bottom border-primary p-2">
+                                    <hr class="text-primary w-50 mx-auto mt-0">
+                                    <div class="d-flex mb-3 text-primary"><i class="fa fa-check-double pe-2"></i><span>順應地形地貌、以挖填平衡為原則</span></div>
+                                    <div class="d-flex mb-3 text-primary"><i class="fa fa-check-double pe-2"></i><span>除局部區位外，整地後建築坵塊坡度呈三級坡以下且與道路平順銜接為原則</span></div>
+                                    <div class="d-flex mb-3 text-primary"><i class="fa fa-check-double pe-2"></i><span>部分區位山丘量體過大，保持原地形不予整地</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 分項工程 End -->
+    <!--圖片modal-->
+    <div class="row" id="divProjImage">
+        <div class="modal fade" id="ModalP01" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center">
+                        <img class="img-fluid rounded-top w-100" src="img/A整地工程-.jpg" alt="" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/twentytwenty/jquery.event.move.js"></script>
+    <script src="lib/twentytwenty/jquery.twentytwenty.js"></script>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

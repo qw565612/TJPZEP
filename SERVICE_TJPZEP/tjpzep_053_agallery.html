@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>土重處土城司法園區區段徵收公共工程</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="keywords">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="description">
+    <!--以下meta目的是清除快取，以免保留舊靜態網頁-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0" />
+    <!-- Favicon -->
+    <link href="img/ico.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="css/css2.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!--  Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Customize Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <script>
+        var TOKEN = '';
+        var U_Permit = '';
+
+        $(document).ready(function () {
+            let s = location.href;
+            sessionStorage.setItem("myURL", s);
+
+            var chkURL = sessionStorage.getItem("chkURL");
+            var url = parent.document.URL;
+
+            if (chkURL == null) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+            if (url != chkURL) {
+                window.location.href = './tjpzep_index.html';
+                return;
+            }
+
+            initControll();
+            getGalleryData('AIR');
+        })
+
+        function initControll()
+        { }
+
+        function getGalleryData(GALLERY_TYPE) {
+
+            var selectYear = $('#selectYear').val();
+
+            var FUN_NAME = "GALLERY_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"-999","GALLERY_TYPE":"' + GALLERY_TYPE + '"}';
+
+            var TILTEs = [];
+
+            var dataBTN = "";
+            var dataImage = "";
+            $.ajax({
+                url: './service.ashx',
+                //url: 'https://tjpzep.sinotech.com.tw/SERVICE_TJPZEP/service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+                            var IDX = obj.IDX;
+                            var GALLERY_TILTE = obj.GALLERY_TILTE;
+                            var GALLERY_TEXT = obj.GALLERY_TEXT;
+                            var GALLERY_FILE_NAME = obj.GALLERY_FILE_NAME;
+                            var GALLERY_DATE = obj.GALLERY_DATE;
+
+                            var MyDate = new Date(GALLERY_DATE);
+                            var year = MyDate.getFullYear();
+                            var month = MyDate.getMonth() + 1;
+                            var day = MyDate.getDate();
+
+                            if (selectYear != "ALL" && year != selectYear)
+                            { return; }
+
+                            
+
+                            if(i==0)
+                            {
+                                dataBTN += "<button type='button' data-bs-target='#carouselAero' data-bs-slide-to='" + i.toString() + "' class='active' aria-current='true' aria-label='Slide " + i.toString() + "'>" + GALLERY_TILTE + "</button>";
+                                dataImage += "<div class='carousel-item active' data-bs-interval='200000'> "+
+                                             "      <img src='photo/" + GALLERY_FILE_NAME + "' class='d-block w-100' alt=''> " +
+                                             "        <div class='carousel-caption d-none d-md-block'> "+
+                                             "          <h3>" + GALLERY_TILTE + "</h3> " +
+                                             "       </div> "+
+                                             " </div> ";
+                            }
+                            else
+                            {
+                                dataBTN += "<button type='button' data-bs-target='#carouselAero' data-bs-slide-to='" + i.toString() + "' aria-label='Slide " + i.toString() + "'>" + GALLERY_TILTE + "</button> ";
+                                dataImage += "<div class='carousel-item' data-bs-interval='200000'> " +
+                                     "      <img src='photo/" + GALLERY_FILE_NAME + "' class='d-block w-100' alt=''> " +
+                                     "        <div class='carousel-caption d-none d-md-block'> " +
+                                     "          <h3>" + GALLERY_TILTE + "</h3> " +
+                                     "       </div> " +
+                                     " </div> ";
+                            }
+                            i += 1;
+                        });
+                      
+                        $('#div_air_btn').html(dataBTN);
+                        $('#div_air_image').html(dataImage);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+
+                }
+
+            })
+
+        }
+
+        function cmd_Q() {
+            getGalleryData('AIR');
+        }
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid mt-3 mb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 zoomIn" data-wow-delay="0.1s">
+                    <h2>空拍影像</h2>
+                    <!--查詢bar-->
+                    <div class="row g-3 align-items-center mb-3">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">選擇年份</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" aria-label=".form-select-lg" id="selectYear">
+                                <option value="ALL" selected>全選</option>
+                                <option value="2024">2024年</option>
+                                <option value="2023">2023年</option>
+                                <option value="2022">2022年</option>
+                                <option value="2021">2021年</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary"  onclick="cmd_Q()">查詢</button>
+                        </div>
+                    </div>
+                    <div id="carouselAero" class="carousel slide carousel-fade" data-bs-ride="carousel" >
+                        <div class="carousel-indicators row top-0 m-2 gy-2" id="div_air_btn">
+                         </div>
+                         
+                        <div class="carousel-inner"  id="div_air_image">  
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselAero" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">上一頁</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselAero" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">下一頁</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner End -->
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/twentytwenty/jquery.event.move.js"></script>
+    <script src="lib/twentytwenty/jquery.twentytwenty.js"></script>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

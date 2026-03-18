@@ -1,0 +1,12 @@
+# 排除大型影片
+*.mp4
+*.mov
+*.avi
+
+# 排除開發暫存與套件 (這最佔空間)
+node_modules/
+bin/
+obj/
+.vs/
+*.exe
+*.zip

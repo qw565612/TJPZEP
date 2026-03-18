@@ -1,0 +1,2505 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>土重處土城司法園區區段徵收公共工程</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="keywords">
+    <meta content="土重處土城司法園區區段徵收公共工程" name="description">
+    <!--以下meta目的是清除快取，以免保留舊靜態網頁-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0" />
+    <!-- Favicon -->
+    <link href="img/ico.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="css/css2.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!--  Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    
+
+
+    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" rel="stylesheet">
+    <!-- Customize Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/4.0.1/js/fixedHeader.dataTables.js"></script>
+
+
+
+
+    <script>
+        var tb_News;
+        var tb_News_Data = [];
+
+        var tb_Pic;
+        var tb_Pic_Data = [];
+
+        var tb_Schedule;
+        var tb_Schedule_Data = [];
+
+        var tb_User; 
+        var tb_User_Data = [];
+
+        $(document).ready(function () {
+            $('#mask_Query').fadeIn(200);
+
+            $('#close_news').click(function () {
+                $('#overlay_news').fadeOut(300);
+                setFunction('news');
+            });
+
+            $('#close_proj').click(function () {
+                $('#overlay_proj').fadeOut(300);
+            });
+
+            $('#close_pic').click(function () {
+                get_PicDT('-999');
+                $('#overlay_pic').fadeOut(300);
+            });
+
+            $('#close_account').click(function () {
+                $('#overlay_account').fadeOut(300);
+            });
+
+            if (sessionStorage.getItem('token') == null) {
+
+                top.location.href = "tjpzep_00_signin.html";
+                alert('權限不足或尚未登入');
+
+                return false;
+            }
+            else {
+                initControl();
+                setFunction('news');
+            }
+        })
+
+        /*後-網頁載入完成之後*/
+        window.onload = function () {
+
+        }
+
+        var timerTableColumnWidth = setInterval(function () {
+            tb_News.columns.adjust();
+        }, 500);
+
+        //var timerCheckTokenTimeOut = setInterval(function () {
+        //    checkTokenTimeOut();
+        //}, 1000);
+
+
+
+        function initControl() {
+            var u_name = sessionStorage.getItem("u_name");
+
+            $('#u_name').html(u_name);
+
+            /*消息管理*/
+            tb_News = new DataTable('#news_table', {
+                "scrollY": "450px",
+                paging: false,
+                responsive: true,
+                language: {
+                    "processing": "處理中...",
+                    "loadingRecords": "載入中...",
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有符合的結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(從 _MAX_ 項結果中過濾)",
+                    "infoPostFix": "",
+                    "search": "<span class='fw-bold'><i class='bi bi-search'></i> 搜尋：</span>",
+                    "paginate": {
+                        "first": "第一頁",
+                        "previous": "上一頁",
+                        "next": "下一頁",
+                        "last": "最後一頁"
+                    },
+                    "aria": {
+                        "sortAscending": ": 升冪排列",
+                        "sortDescending": ": 降冪排列"
+                    }
+                },
+                columnDefs: [
+                  { "width": "120px", "targets": [0] },
+                  { "width": "100px", "targets": [3, 4] },
+                  //{ "width": "400px", "targets": [2] },
+                  {
+                      "targets": [1, 2, 3, 4],
+                      "orderable": false
+                  },
+                  {
+                      "targets": [0, 1,2,3, 4], // your case first column
+                      "className": "text-center"
+                  }
+
+                ],
+                "order": [[0, "desc"]],
+                pageLength: 10,
+                layout: {
+                    topStart: {
+                        buttons: [
+                            {
+                                text: '<i class="bi bi-plus-circle-fill text-light text-center pe-2"></i>新增',
+                                className: 'btn p-2 btn-secondary text-light me-2',
+                                action: function (e, dt, node, config) {
+                                    Add_News();
+                                }
+                            }
+                        ]
+                    }
+                },
+                //"dom": '<"my-wrapper"<"my-inner1"i><"my-inner2"l><"my-inner3"p>><t>'
+
+                "fnDrawCallback": function (oSettings) {
+                    //alert('DataTables has finished its initialisation.');
+
+                }
+
+            });
+
+
+            /*進度管理*/
+            tb_Schedule = new DataTable('#schedule_table', {
+                "scrollY": "450px",
+                paging: false,
+                //responsive: true,
+                language: {
+                    "processing": "處理中...",
+                    "loadingRecords": "載入中...",
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有符合的結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(從 _MAX_ 項結果中過濾)",
+                    "infoPostFix": "",                    
+                    "search": "<i class='bi bi-search'></i> 搜尋：",
+                    "paginate": {
+                        "first": "第一頁",
+                        "previous": "上一頁",
+                        "next": "下一頁",
+                        "last": "最後一頁"
+                    },
+                    "aria": {
+                        "sortAscending": ": 升冪排列",
+                        "sortDescending": ": 降冪排列"
+                    }
+                },
+                columnDefs: [
+                   { "width": "100px", "targets": [4] },
+                ],
+                "order": [[0, "desc"]],
+                pageLength: 10,
+                //"dom": '<"my-wrapper"<"my-inner1"i><"my-inner2"l><"my-inner3"p>><t>'
+
+                "fnDrawCallback": function (oSettings) {
+                    //alert('DataTables has finished its initialisation.');
+
+                }
+
+            });
+
+            /*影像管理*/
+            tb_Pic = new DataTable('#pics_table', {
+                "scrollY": "450px",
+                paging: false,
+                //responsive: true,
+                language: {
+                    "processing": "處理中...",
+                    "loadingRecords": "載入中...",
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有符合的結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(從 _MAX_ 項結果中過濾)",
+                    "infoPostFix": "",
+                    "search": "搜尋：",
+                    "paginate": {
+                        "first": "第一頁",
+                        "previous": "上一頁",
+                        "next": "下一頁",
+                        "last": "最後一頁"
+                    },
+                    "aria": {
+                        "sortAscending": ": 升冪排列",
+                        "sortDescending": ": 降冪排列"
+                    }
+                },
+                columnDefs: [
+                  /*{ "width": "120px", "targets": [0, 3] },
+                  { "width": "100px", "targets": [4, 5] },*/                  
+                  { "width": "120px", "targets": [3] },
+                  { "width": "100px", "targets": [0,5] },
+                  {
+                      "targets": [1, 2, 3, 4],
+                      "orderable": false
+                  },
+                  {
+                      "targets": [0, 3], // your case first column
+                      "className": "text-center fs-6"
+                  }
+
+                ],
+                "order": [[0, "desc"]],
+                pageLength: 10,
+                layout: {
+                    topStart: {
+                        buttons: [
+                            {
+                                text: '<i class="bi bi-plus-circle-fill text-light text-center pe-2"></i>新增',
+                                className: 'btn p-2 btn-secondary text-light me-2',
+                                action: function (e, dt, node, config) {
+                                    Add_Gallery();
+                                }
+                            }
+                        ]
+                    }
+                },
+                //"dom": '<"my-wrapper"<"my-inner1"i><"my-inner2"l><"my-inner3"p>><t>'
+
+                "fnDrawCallback": function (oSettings) {
+                    //alert('DataTables has finished its initialisation.');
+
+                }
+
+            });
+
+
+            /*帳號管理*/
+            tb_User = new DataTable('#user_table', {
+                "scrollY": "450px",
+                paging: false,
+                //responsive: true,
+                language: {
+                    "processing": "處理中...",
+                    "loadingRecords": "載入中...",
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有符合的結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(從 _MAX_ 項結果中過濾)",
+                    "infoPostFix": "",
+                    "search": "帳號ID或名稱搜尋：",
+                    "paginate": {
+                        "first": "第一頁",
+                        "previous": "上一頁",
+                        "next": "下一頁",
+                        "last": "最後一頁"
+                    },
+                    "aria": {
+                        "sortAscending": ": 升冪排列",
+                        "sortDescending": ": 降冪排列"
+                    }
+                },
+                columnDefs: [
+                  { "width": "120px", "targets": [0] },
+                  { "width": "140px", "targets": [1] },
+                  { "width": "110px", "targets": [5, 6] },                  
+                  { "width": "100px", "targets": [8] },
+                 
+
+                ],
+                "order": [[0, "desc"]],
+                pageLength: 10,
+              
+                //"dom": '<"my-wrapper"<"my-inner1"i><"my-inner2"l><"my-inner3"p>><t>'
+
+                "fnDrawCallback": function (oSettings) {
+                    //alert('DataTables has finished its initialisation.');
+
+                }
+
+            });
+            
+        }
+        function logout() {
+            var statu = confirm("您確定【登出】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("u_permit");
+            sessionStorage.removeItem("u_name");
+
+            top.location.href = "tjpzep_00_signin.html";
+        }
+        function setFunction(fun) {
+            $('#A_News').removeClass('btn-primary');
+            $('#A_News').removeClass('btn-secondary');
+
+            $('#A_Proj').removeClass('btn-primary');
+            $('#A_Proj').removeClass('btn-secondary');
+
+            $('#A_Pic').removeClass('btn-primary');
+            $('#A_Pic').removeClass('btn-secondary');
+
+            $('#A_Account').removeClass('btn-primary');
+            $('#A_Account').removeClass('btn-secondary');
+
+            $('#div_News').hide();
+            $('#div_Proj').hide();
+            $('#div_Pic').hide();
+            $('#div_Account').hide();
+
+            switch (fun) {
+                case 'news':
+                    $('#A_News').addClass('btn-secondary');
+                    $('#A_Proj').addClass('btn-primary');
+                    $('#A_Pic').addClass('btn-primary');
+                    $('#A_Account').addClass('btn-primary');
+
+                    get_NewsDT('-999');
+
+                    $('#div_News').show();
+                    break;
+                case 'proj':
+                    $('#A_News').addClass('btn-primary');
+                    $('#A_Proj').addClass('btn-secondary');
+                    $('#A_Pic').addClass('btn-primary');
+                    $('#A_Account').addClass('btn-primary');
+
+                    get_ScheduleDT();
+
+                    $('#div_Proj').show();
+                    break;
+                case 'pic':
+                    $('#A_News').addClass('btn-primary');
+                    $('#A_Proj').addClass('btn-primary');
+                    $('#A_Pic').addClass('btn-secondary');
+                    $('#A_Account').addClass('btn-primary');
+                    get_PicDT('-999');
+
+                    $('#div_Pic').show();
+                    break;
+                case 'account':
+                    $('#A_News').addClass('btn-primary');
+                    $('#A_Proj').addClass('btn-primary');
+                    $('#A_Pic').addClass('btn-primary');
+                    $('#A_Account').addClass('btn-secondary');
+
+                    get_UserDT();
+
+                    $('#div_Account').show();
+                    break;
+                default:
+
+                    alert("系統功能 開發中");
+            }
+        }
+
+        /*最新消息*/
+        function get_NewsDT(IDX) {
+            $('#mask_Query').fadeIn(200);
+
+            tb_News_Data = [];
+
+
+            var FUN_NAME = "NEWS_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"' + IDX + '"}';
+
+            var IDXs = [];
+            $.ajax({
+                url: './service.ashx',
+                //url: 'https://tjpzep.sinotech.com.tw/SERVICE_TJPZEP/service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+
+                        $.each(dataArray.Data, function (idx, obj) {
+
+                            var arrRow = [];                            
+                            var IDX = obj.IDX;
+                            var N_Date = obj.N_Date.replace('T00:00:00', '');
+                            var N_Title = obj.N_Title;
+                            var N_Text = obj.N_Text;
+                            var N_Url = obj.N_Url;
+
+                            if (N_Url != null && N_Url != '') {
+                                N_Url = "<a class='text-black' target='_blank' href='" + N_Url + "'>連結瀏覽</a> ";
+                            }
+                            else {
+                                N_Url = '';
+                            }
+
+                            var Files = '';
+
+                            $.each(dataArray.Data, function (idx_2, obj_2) {
+                                var File_Title = obj_2.File_Title;
+
+                                var File_Name = obj_2.File_Name;
+                                if (IDX == obj_2.IDX && File_Title != null) {
+                                    Files += "<a class='fs-6 text-dark text-start' target='_blank' href='file/" + File_Name + "' download>" + File_Title + "</a> ";
+                                }
+                            })
+
+                            arrRow.push(N_Date);
+                            arrRow.push(N_Title);
+                            arrRow.push(N_Text);                           
+                            arrRow.push(N_Url + Files);
+
+                            var buttons =
+                                "   <button type='button' class='btn btn-sm p-1 bg-primary rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Modify_News('" + IDX + "')\">" +
+                                "        <i class='bi bi-pen-fill text-light text-center'></i>" +
+                                "   </button>" +
+                                "   <button type='button' class='btn btn-sm p-1 bg-danger rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Del_News('" + IDX + "')\">" +
+                                "        <i class='bi bi-trash text-light'></i>" +
+                                "   </button>";
+                            arrRow.push(buttons);
+
+                            let indexIDX = IDXs.indexOf(IDX);
+                            if (indexIDX < 0) {
+                                tb_News_Data.push(arrRow);
+                                IDXs.push(IDX);
+                            }
+                        });
+
+                        putData(tb_News, tb_News_Data)
+                        $('#mask_Query').fadeOut(200);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+            return;
+
+        }
+
+        var My_Add_New_N_No;
+     
+        function Add_News() {
+
+            $('#btn_Modify_New').hide();
+            $('#btn_Add_New').show();
+            $('#pop_news_title').html("訊息管理-新增");
+            $('#btn_Upoad_News_File').hide();// 原btn_Upoad_Gallery_Img
+            $('#Modify_News_IDX').val('');
+            $('#txt_Modify_N_Title').val('');
+            $('#txt_Modify_N_Text').val('');
+            $('#txt_Modify_N_Url').val('');
+            $('#txt_Modify_N_Date').val('');
+            $('#fileList').html(''); //原 #imgList
+            $('#overlay_news').fadeIn(300);
+
+        }
+        function cmd_Sure_Add_New() {
+            var date = new Date();
+
+            var year = date.getFullYear() //Year: 2013
+            var month = date.getMonth() + 1;
+            var day = date.getDate(); //Date of the month: 2 in our example
+
+            var hours = date.getHours();
+            var min = date.getMinutes();
+            var sec = date.getSeconds();
+
+            if (month < 10) month = "0" + month;
+            if (day < 10) day = "0" + day;
+            if (hours < 10) hours = "0" + hours;
+            if (min < 10) min = "0" + min;
+            if (sec < 10) sec = "0" + sec;
+
+            var myNo = year.toString() + month.toString() + day.toString() + hours.toString() + min.toString() + sec.toString();
+
+
+            var Modify_News_IDX = $('#Modify_News_IDX').val();
+            var txt_Modify_N_Title = $('#txt_Modify_N_Title').val();
+            var txt_Modify_N_Text = $('#txt_Modify_N_Text').val();
+            var txt_Modify_N_Url = $('#txt_Modify_N_Url').val();
+            var txt_Modify_N_Date = $('#txt_Modify_N_Date').val();
+
+
+            var chkMessage = '';
+            if (txt_Modify_N_Title == '') {
+                chkMessage += "【標題】";
+
+            }
+            if (txt_Modify_N_Text == '') {
+                chkMessage += "【內容】";
+
+            }
+            if (txt_Modify_N_Date == '') {
+                chkMessage += "【日期】";
+
+            }
+            if (chkMessage != '') {
+                var statu = confirm(chkMessage + "未輸入。");
+                return false;
+            }
+
+            var statu = confirm("您確定【新增】【最新消息】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            //alert(Modify_New_IDX + "," + myNo + "," + txt_Modify_N_Title + "," + txt_Modify_N_Text + "," + txt_Modify_N_Url + "," + txt_Modify_N_Date);
+
+            var FUN_NAME = "NEWS_ADD";//必要參數 預存程序名稱
+            var TYPE = "I";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '",' +
+                    '"N_Title":"' + txt_Modify_N_Title + '","N_Text":"' + txt_Modify_N_Text + '",' +
+                    '"N_Url":"' + txt_Modify_N_Url + '","N_No":"' + myNo + '",' +
+                    '"N_Date":"' + txt_Modify_N_Date + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        var IDX = "";
+                        $.each(dataArray.Data, function (idx, obj) {
+                            IDX = obj.RETURN_IDX;
+                        })
+                        alert(Message_Content);
+                        /*進入修改模式*/
+                        Modify_News(IDX)
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+
+        function Modify_News(idx) {
+            $('#btn_Modify_New').show();
+            $('#btn_Add_New').hide();
+            $('#btn_Upoad_News_File').show(); 
+            $('#pop_news_title').html("訊息管理-修改");
+
+            $('#Modify_News_IDX').val();
+            $('#overlay_news').fadeIn(300);
+            $('#Modify_News_IDX').val(idx);
+
+            var FUN_NAME = "NEWS_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"' + idx + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',                
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        {
+                            var i = 0;
+
+                            $.each(dataArray.Data, function (idx, obj) {
+                                var arrRow = [];
+                                var IDX = obj.IDX;
+                                var N_NO = obj.N_NO;
+                                var N_Date = obj.N_Date.replace('T00:00:00', '');
+                                var N_Title = obj.N_Title;
+                                var N_Text = obj.N_Text;
+                                var N_Url = obj.N_Url;
+
+                                var FileNames = [];
+                                var FileTitles = [];
+                                var Files = "";
+
+                                Files += "<div class='row'>";
+                                $.each(dataArray.Data, function (idx_2, obj_2) {
+
+                                    var NEWS_FILE_TITLE_2 = obj_2.File_Title;
+                                    var NEWS_FILE_NAME_2 = obj_2.File_Name;
+                                    var File_IDX_2 = obj_2.FILE_IDX;//obj_2.IDX
+                                    console.log(obj_2.IDX)
+                                    if (N_NO == obj_2.N_NO && NEWS_FILE_TITLE_2 != null) {
+                                        //FileNames.push(NEWS_FILE_NAME_2);
+                                        FileTitles.push(NEWS_FILE_TITLE_2);                                        
+                                        Files += "<div class='col-3 text-start'><span class='fs-6 text-dark'>" + NEWS_FILE_NAME_2 + "</span><button type='button' class='d-block btn btn-secondary btn-sm fs-6 rounded-0 mt-1' onclick='Del_File(" + File_IDX_2 + ")' )>移除檔案</button></div>";
+                                    }
+                                })
+                                Files += "</div> ";
+                                let indexNO = NOs.indexOf(N_NO);
+                                if (indexNO < 0) {                                                                        
+                                    $('#txt_Modify_N_Text').val(N_Text);
+                                    $('#txt_Modify_N_Title').val(N_Title);
+                                    $('#txt_Modify_N_Url').val(N_Url);
+                                    $('#txt_Modify_N_Date').val(N_Date);
+                                    $('#fileList').html(Files); //原imgList
+                                    NOs.push(N_NO);
+                                }
+
+                            });
+
+
+                        }
+                        $('#mask_Query').fadeOut(200);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+        }
+
+        function cmd_Sure_Modify_New() {
+
+            var N_IDX = $('#Modify_News_IDX').val();
+
+            var N_Title = $('#txt_Modify_N_Title').val();
+            var N_Text = $('#txt_Modify_N_Text').val();
+
+            var N_Url = $('#txt_Modify_N_Url').val();
+            var N_Date = $('#txt_Modify_N_Date').val();
+
+            var chkMessage = '';
+            if (N_Title == '') {
+                chkMessage += "【標題】";
+
+            }
+            if (N_Text == '') {
+                chkMessage += "【內容】";
+
+            }
+            if (N_Date == '') {
+                chkMessage += "【日期】";
+
+            }
+            if (chkMessage != '') {
+                var statu = confirm(chkMessage + "未輸入。");
+                return false;
+            }
+
+            var statu = confirm("您確定【修改】【最新消息】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "NEWS_MODIFY";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + N_IDX + '","N_Title":"' + N_Title + '","N_Text":"' + N_Text + '","N_Url":"' + N_Url + '","N_Date":"' + N_Date + '"}';
+
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        Modify_News(N_IDX);;
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+            //$('#overlay_news').fadeOut(300);
+
+
+        }
+
+        function Del_News(idx) {
+
+
+            var statu = confirm("您確定 移除此【消息】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "NEWS_DEL";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_NewsDT('-999');
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+
+        /* 刪除消息檔案  */
+        function Del_File(idx) {
+            //alert(idx)
+            var statu = confirm("您確定【移除檔案】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+            var NEWS_IDX = $('#Modify_News_IDX').val();
+
+            var FUN_NAME = "NEWS_FILE_DEL";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+                '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '"}';
+            console.log(idx)
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        Modify_News(NEWS_IDX);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+        }
+
+
+        /*進度管理*/
+        function get_ScheduleDT() {
+
+            tb_Schedule_Data = [];
+
+            var FUN_NAME = "SCHEDULE_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1"}';
+
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+                            i += 1;
+
+                            var arrRow = [];
+                            var IDX = obj.IDX;
+                            var YEAR_MONTH = obj.YEAR_MONTH;
+                            var PREDICT = obj.PREDICT;
+                            var REAL = obj.REAL;
+                            var MODIFY_DT = obj.MODIFY_DT;
+                            if (PREDICT == null) { PREDICT = '' }
+                            if (REAL == null) { REAL =''}
+                            var buttons =
+                                "   <button type='button' class='btn btn-sm p-1 bg-primary rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Modify_Schedule('" + IDX + "')\">" +
+                                "        <i class='bi bi-pen-fill text-light text-center'></i>" +
+                                "   </button>" +
+                                "   <button type='button' class='btn btn-sm p-1 bg-danger rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Del_Schedule('" + IDX + "')\">" +
+                                "        <i class='bi bi-trash text-light'></i>" +
+                                "   </button>";
+
+                            arrRow.push('<input id="txt_YEAR_MONTH_' + IDX + '"  type="text" class="form-control YEAR_MONTH" value="' + YEAR_MONTH + '" placeholder="請輸入年月 格式：民國年XX月">');
+                            arrRow.push('<input id="txt_PREDICT_' + IDX + '" type="text" class="form-control" value="' + PREDICT + '" placeholder="請輸入預計進度 格式：00.00">');
+                            arrRow.push('<input id="txt_REAL_' + IDX + '" type="text" class="form-control" value="' + REAL + '" placeholder="請輸入實際進度 格式：00.00">');
+                            arrRow.push(MODIFY_DT);
+                            arrRow.push(buttons);
+                            tb_Schedule_Data.push(arrRow);
+                            if (i == dataArray.Data.length)
+                            {
+                                var arrRow = [];
+                                arrRow.push('<input id="txt_YEAR_MONTH_New" type="text" class="form-control" placeholder="請輸入年月 格式：民國年XX月">');
+                                arrRow.push('<input id="txt_PREDICT_New" type="text" class="form-control" placeholder="請輸入預計進度 格式：00.00">');
+                                arrRow.push('<input id="txt_REAL_New" type="text" class="form-control" placeholder="請輸入實際進度 格式：00.00">');
+                                arrRow.push("--");
+                                arrRow.push('<button type="button" class="btn btn-danger rounded-0 " onclick="Add_Schedule()">新增</button>');
+                                tb_Schedule_Data.push(arrRow);
+                            }
+
+                        });
+
+                        putData(tb_Schedule, tb_Schedule_Data)
+                        $('#mask_Query').fadeOut(200);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+
+        }
+
+        function Add_Schedule()
+        {
+            var txt_YEAR_MONTH_New =  $('#txt_YEAR_MONTH_New').val();
+            var txt_PREDICT_New = $('#txt_PREDICT_New').val();
+            var txt_REAL_New = $('#txt_REAL_New').val();
+
+
+            var elements = document.querySelectorAll('.YEAR_MONTH');
+            var values = [];
+
+            for (var i = 0; i < elements.length; i++) {
+                //values.push({ index: elements[i].value });
+                if (elements[i].value == txt_YEAR_MONTH_New)
+                {
+                    alert("【年度-月份】【" + elements[i].value + "】 重複，請重新輸入。")
+                    return;
+                }
+            }
+
+            //SCHEDULE_ADD
+            var statu = confirm("您確定【新增】【進度管理】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "SCHEDULE_ADD";//必要參數 預存程序名稱
+            var TYPE = "I";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '",' +
+                    '"YEAR_MONTH":"' + txt_YEAR_MONTH_New + '","PREDICT":"' + txt_PREDICT_New + '",' +
+                    '"REAL":"' + txt_REAL_New + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        var IDX = "";
+                        $.each(dataArray.Data, function (idx, obj) {
+                            IDX = obj.RETURN_IDX;
+                        })
+                        alert(Message_Content);
+                        /*重新查詢*/
+                        get_ScheduleDT();
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+            //alert(txt_YEAR_MONTH_New + "," + txt_PREDICT_New + "," + txt_REAL_New);
+        }
+
+        function Modify_Schedule(IDX)
+        {
+            var txt_YEAR_MONTH = $('#txt_YEAR_MONTH_' + IDX).val();
+            var txt_PREDICT = $('#txt_PREDICT_' + IDX).val();
+            var txt_REAL = $('#txt_REAL_' + IDX).val();
+
+
+            var elements = document.querySelectorAll('.YEAR_MONTH');
+            var values = [];
+
+            for (var i = 0; i < elements.length; i++) {
+
+                //values.push({ index: elements[i].value });
+                if (elements[i].value == txt_YEAR_MONTH && elements[i].id != 'txt_YEAR_MONTH_' + IDX) {
+                    alert("【年度-月份】【" + elements[i].value + "】 重複，請重新輸入。")
+                    return;
+                }
+            }
+
+            var statu = confirm("您確定【修改】【計畫進度】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "SCHEDULE_MODIFY";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + IDX + '","YEAR_MONTH":"' + txt_YEAR_MONTH + '","PREDICT":"' + txt_PREDICT + '","REAL":"' + txt_REAL + '"}';
+
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_ScheduleDT();
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+
+
+
+            //alert(txt_YEAR_MONTH + ',' + txt_PREDICT + ',' + txt_REAL);
+        }
+        function Del_Schedule(IDX)
+        {
+
+            var statu = confirm("您確定 移除此【進度管理】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "SCHEDULE_DEL";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + IDX + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_ScheduleDT();
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+
+        }
+
+        /*照片管理*/
+        function get_PicDT(IDX) {
+            $('#mask_Query').fadeIn(200);
+
+            tb_Pic_Data = [];
+
+            var FUN_NAME = "GALLERY_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"' + IDX + '","GALLERY_TYPE":"ALL"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+                            var arrRow = [];
+                            var IDX = obj.IDX;
+                            var GALLERY_TYPE = obj.GALLERY_TYPE;
+                            var GALLERY_NO = obj.GALLERY_NO;
+
+                            var GALLERY_DATE = obj.GALLERY_DATE;
+                            if (GALLERY_DATE != null) {
+                                GALLERY_DATE = obj.GALLERY_DATE.replace('T00:00:00', '');
+                            }
+                            var GALLERY_TILTE = obj.GALLERY_TILTE;
+                            var GALLERY_TEXT = obj.GALLERY_TEXT;
+
+                            var GALLERY_FILE_TITLE = obj.GALLERY_FILE_TITLE;
+                            var GALLERY_FILE_NAME = obj.GALLERY_FILE_NAME;
+
+                            var Files = '';
+
+                            $.each(dataArray.Data, function (idx_2, obj_2) {
+
+                                var GALLERY_FILE_TITLE_2 = obj_2.GALLERY_FILE_TITLE;
+                                var GALLERY_FILE_NAME_2 = obj_2.GALLERY_FILE_NAME;
+
+                                if (GALLERY_NO == obj_2.GALLERY_NO && GALLERY_FILE_TITLE_2 != null) {
+                                    Files += "<a class='fs-6 text-dark text-start' target='_blank' href='photo/" + GALLERY_FILE_NAME_2 + "' download>" + GALLERY_FILE_TITLE_2 + "</a> ";
+                                }
+                            })
+
+                            var buttons =
+                                "   <div class='d-flex justify-content-between'>"+
+                                "   <button type='button' class='btn btn-sm p-1 bg-primary rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Modify_Pic('" + IDX + "')\">" +
+                                "        <i class='bi bi-pen-fill text-light text-center'></i>" +
+                                "   </button>" +
+                                "   <button type='button' class='btn btn-sm p-1 bg-danger rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Del_Gallery('" + IDX + "')\">" +
+                                "        <i class='bi bi-trash text-light'></i>" +
+                                "   </button></div>";
+
+
+                            arrRow.push(GALLERY_TYPE);
+                            arrRow.push(GALLERY_TILTE);
+                            arrRow.push(GALLERY_TEXT);
+
+                            arrRow.push(GALLERY_DATE);
+
+
+                            arrRow.push(Files);
+                            arrRow.push(buttons);
+
+                            let indexNO = NOs.indexOf(GALLERY_NO);
+                            if (indexNO < 0) {
+                                tb_Pic_Data.push(arrRow);
+                                NOs.push(GALLERY_NO);
+                            }
+
+                        });
+
+                        putData(tb_Pic, tb_Pic_Data)
+                        $('#mask_Query').fadeOut(200);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+
+        }
+
+        var My_Add_Pic_GalleryNo;
+        function Add_Gallery() {
+
+            $('#btn_Modify_Pic').hide();
+
+            $('#btn_Add_Pic').show();
+            $('#btn_Upoad_Gallery_Img').hide();
+
+            $('#pop_pic_title').html("照片管理-新增");
+
+            $('#Modify_GALLERY_IDX').val('');
+            $('#txt_Modify_N_Title').val('');
+            $('#txt_Modify_GALLERY_TILTE').val('');
+            $('#txt_Modify_GALLERY_TEXT').val('');
+            $('#txt_Modify_GALLERY_DATE').val('');
+            $('#imgList').html('');
+
+            $('#overlay_pic').fadeIn(300);
+
+        }
+        function cmd_Sure_Add_Gallery() {
+            var date = new Date();
+
+            var year = date.getFullYear() //Year: 2013
+            var month = date.getMonth() + 1;
+            var day = date.getDate(); //Date of the month: 2 in our example
+
+            var hours = date.getHours();
+            var min = date.getMinutes();
+            var sec = date.getSeconds();
+
+            if (month < 10) month = "0" + month;
+            if (day < 10) day = "0" + day;
+            if (hours < 10) hours = "0" + hours;
+            if (min < 10) min = "0" + min;
+            if (sec < 10) sec = "0" + sec;
+
+            var myNo = year.toString() + month.toString() + day.toString() + hours.toString() + min.toString() + sec.toString();
+
+            var txt_Modify_GALLERY_TYPE = $('#txt_Modify_GALLERY_TYPE').val();
+            var txt_Modify_GALLERY_TILTE = $('#txt_Modify_GALLERY_TILTE').val();
+            var txt_Modify_GALLERY_TEXT = $('#txt_Modify_GALLERY_TEXT').val();
+            var txt_Modify_GALLERY_DATE = $('#txt_Modify_GALLERY_DATE').val();
+
+            var chkMessage = '';
+            if (txt_Modify_GALLERY_TYPE == '') {
+                chkMessage += "【影像類別】";
+
+            }
+            if (txt_Modify_GALLERY_TILTE == '') {
+                chkMessage += "【分項工程/標題】";
+
+            }
+            if (txt_Modify_GALLERY_DATE == '') {
+                chkMessage += "【日期】";
+
+            }
+            if (chkMessage != '') {
+                var statu = confirm(chkMessage + "未輸入。");
+                return false;
+            }
+
+            var statu = confirm("您確定【新增】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "GALLERY_ADD";//必要參數 預存程序名稱
+            var TYPE = "I";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '",' +
+                    '"GALLERY_TILTE":"' + txt_Modify_GALLERY_TILTE + '","GALLERY_TEXT":"' + txt_Modify_GALLERY_TEXT + '",' +
+                    '"GALLERY_TYPE":"' + txt_Modify_GALLERY_TYPE + '","GALLERY_NO":"' + myNo + '",' +
+                    '"GALLERY_DATE":"' + txt_Modify_GALLERY_DATE + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        var IDX = "";
+                        $.each(dataArray.Data, function (idx, obj) {
+                            IDX = obj.RETURN_IDX;
+                        })
+                        alert(Message_Content);
+                        /*進入修改模式*/
+                        Modify_Pic(IDX)
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+
+        function Modify_Pic(idx) {
+            $('#btn_Modify_Pic').show();
+            $('#btn_Add_Pic').hide();
+            $('#btn_Upoad_Gallery_Img').show();
+            $('#pop_pic_title').html("照片管理-修改");
+
+            $('#Modify_GALLERY_IDX').val();
+            $('#overlay_pic').fadeIn(300);
+            $('#Modify_GALLERY_IDX').val(idx);
+
+            var FUN_NAME = "GALLERY_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","IDX":"' + idx + '","GALLERY_TYPE":"ALL"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+                            var arrRow = [];
+                            var IDX = obj.IDX;
+                            var GALLERY_TYPE = obj.GALLERY_TYPE;
+                            var GALLERY_NO = obj.GALLERY_NO;
+
+                            var GALLERY_DATE = obj.GALLERY_DATE;
+                            if (GALLERY_DATE != null) {
+                                GALLERY_DATE = obj.GALLERY_DATE.replace('T00:00:00', '');
+                            }
+                            var GALLERY_TILTE = obj.GALLERY_TILTE;
+                            var GALLERY_TEXT = obj.GALLERY_TEXT;
+
+                            var GALLERY_FILE_TITLE = obj.GALLERY_FILE_TITLE;
+                            var GALLERY_FILE_NAME = obj.GALLERY_FILE_NAME;
+
+                            var FileNames = [];
+                            var FileTitles = [];
+                            var Files = "";
+                            Files += "<div class='row'>";
+                            $.each(dataArray.Data, function (idx_2, obj_2) {
+
+                                var GALLERY_FILE_TITLE_2 = obj_2.GALLERY_FILE_TITLE;
+                                var GALLERY_FILE_NAME_2 = obj_2.GALLERY_FILE_NAME;
+                                var File_IDX_2 = obj_2.File_IDX;
+
+                                if (GALLERY_NO == obj_2.GALLERY_NO && GALLERY_FILE_TITLE_2 != null) {
+                                    FileNames.push(GALLERY_FILE_NAME_2);
+                                    FileTitles.push(GALLERY_FILE_TITLE_2);
+                                    Files += "<div class='col-3 text-start'><img src='photo/" + GALLERY_FILE_NAME_2 + "' alt='" + GALLERY_FILE_TITLE_2 + "'> <button type='button' class='d-block btn btn-secondary btn-sm fs-6 rounded-0 mt-1' onclick='Del_Pic(" + File_IDX_2 + ")' )>移除圖檔</button><span class='fs-6 text-dark'>標題：" + GALLERY_FILE_TITLE_2 + "</span></div>";
+                                }
+                            })
+                            Files += "</div> ";
+
+
+                            let indexNO = NOs.indexOf(GALLERY_NO);
+                            if (indexNO < 0) {
+                                console.log(GALLERY_NO, GALLERY_DATE)
+                                $('#txt_Modify_GALLERY_TYPE').val(GALLERY_TYPE);
+
+                                $('#txt_Modify_GALLERY_TILTE').val(GALLERY_TILTE);
+                                $('#txt_Modify_GALLERY_TEXT').val(GALLERY_TEXT);
+
+                                $('#txt_Modify_GALLERY_DATE').val(GALLERY_DATE);
+                                $('#imgList').html(Files);
+                                
+                                NOs.push(GALLERY_NO);
+                            }
+
+                        });
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+
+        }
+        function cmd_Sure_Modify_Gallery() {
+
+
+            var GALLERY_IDX = $('#Modify_GALLERY_IDX').val();
+            var txt_Modify_GALLERY_TYPE = $('#txt_Modify_GALLERY_TYPE').val();
+            var txt_Modify_GALLERY_TILTE = $('#txt_Modify_GALLERY_TILTE').val();
+            var txt_Modify_GALLERY_TEXT = $('#txt_Modify_GALLERY_TEXT').val();
+            var txt_Modify_GALLERY_DATE = $('#txt_Modify_GALLERY_DATE').val();
+
+            //alert(GALLERY_IDX + "," + txt_Modify_GALLERY_TYPE + "," + txt_Modify_GALLERY_TILTE + "," + txt_Modify_GALLERY_TEXT + "," + txt_Modify_GALLERY_DATE);
+
+            var chkMessage = '';
+            if (txt_Modify_GALLERY_TYPE == '') {
+                chkMessage += "【影像類別】";
+
+            }
+
+            if (txt_Modify_GALLERY_TILTE == '') {
+                chkMessage += "【分項工程/標題】";
+
+            }
+            if (txt_Modify_GALLERY_DATE == '') {
+                chkMessage += "【日期】";
+
+            }
+            if (chkMessage != '') {
+                var statu = confirm(chkMessage + "未輸入。");
+                return false;
+            }
+
+            var statu = confirm("您確定【修改】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "GALLERY_MODIFY";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            
+            var PA = '{' +
+            '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + GALLERY_IDX + '","GALLERY_TILTE":"' + txt_Modify_GALLERY_TILTE + '","GALLERY_TEXT":"' + txt_Modify_GALLERY_TEXT + '","GALLERY_TYPE":"' + txt_Modify_GALLERY_TYPE + '","GALLERY_DATE":"' + txt_Modify_GALLERY_DATE + '"}';
+                      
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    //console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        Modify_Pic(GALLERY_IDX);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+        
+        function Del_Pic(idx) {
+
+            var statu = confirm("您確定【移除影像】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+            var GALLERY_IDX = $('#Modify_GALLERY_IDX').val();
+
+            var FUN_NAME = "GALLERY_FILE_DEL";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+            
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '"}';
+            console.log(PA + '!!!')
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    //console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        Modify_Pic(GALLERY_IDX);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+            
+        }
+
+        function Del_Gallery(idx) {
+            var statu = confirm("您確定 移除此【影像分類】【分項工程/標題】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "GALLERY_DEL";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_PicDT('-999');
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+        }
+
+        /*帳號管理*/
+
+        function Add_User() {
+            var txt_U_Id_New = $('#txt_U_Id_New').val();
+            var txt_U_Name_New = $('#txt_U_Name_New').val();
+            var txt_Org_New = $('#txt_Org_New').val();
+            var txt_U_Tel_New = $('#txt_U_Tel_New').val();
+            var txt_U_Email_New = $('#txt_U_Email_New').val();
+            var txt_U_Permit_New = $('#txt_U_Permit_New').val();
+            var txt_U_Enable_New = $('#txt_U_Enable_New').val();
+
+            var txt_U_Pwd_1_New = $('#txt_U_Pwd_1_New').val();
+            var txt_U_Pwd_2_New = $('#txt_U_Pwd_2_New').val();
+
+            var Message = '';
+
+
+            if (U_Ids.indexOf(txt_U_Id_New) >= 0) {
+                Message += '【' + txt_U_Id_New + ' 帳號重複請重新輸入】';
+            }
+            if (txt_U_Id_New.length < 5) {
+                Message += '【 帳號請輸入5碼以上】';
+            }
+            if (txt_U_Name_New == '') {
+                Message += '【 帳號名稱不得為空】';
+            }
+
+            if (txt_U_Pwd_1_New == '' || txt_U_Pwd_2_New == '') {
+                Message += '【密碼 1 與密碼 2 密碼不可空白】';
+            }
+            if (txt_U_Pwd_1_New.length < 10) {
+                Message += '【密碼 必須大於10 碼】';
+            }
+            if (txt_U_Pwd_1_New != txt_U_Pwd_2_New) {
+                alert('密碼 1 與密碼 2 輸入密碼不相同')
+                return false;
+            }
+            if (Message != '') {
+                alert(Message);
+                return false;
+            }
+
+            var statu = confirm("您確定【新增】【帳號】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            //alert(txt_U_Id_New + "," + txt_U_Name_New + "," + txt_Org_New + "," + txt_U_Tel_New + "," + txt_U_Email_New + "," + txt_U_Permit_New + "," + txt_U_Enable_New + "," + txt_U_Pwd_1_New + "," + txt_U_Pwd_2_New)
+
+            var FUN_NAME = "USER_ADD";//必要參數 預存程序名稱
+            var TYPE = "I";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '",' +
+                    '"U_Id":"' + txt_U_Id_New + '","U_Pwd":"' + txt_U_Pwd_1_New + '",' +
+                    '"U_Name":"' + txt_U_Name_New + '","Org":"' + txt_Org_New + '",' +
+                    '"U_Tel":"' + txt_U_Tel_New + '","U_Email":"' + txt_U_Email_New + '",' +
+                    '"U_Permit":"' + txt_U_Permit_New + '","U_Enable":"' + txt_U_Enable_New + '"}';
+
+            var NOs = [];
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        var IDX = "";
+                        $.each(dataArray.Data, function (idx, obj) {
+                            IDX = obj.RETURN_IDX;
+                        })
+                        alert(Message_Content);
+                        /* */
+                        get_UserDT();
+
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+        }
+
+        var U_Ids = [];
+        function get_UserDT() {
+            U_Ids = [];
+            tb_User_Data = [];
+
+            var TOKEN = sessionStorage.getItem('token');
+            var FUN_NAME = "USER_QUERY";//必要參數 預存程序名稱
+            var TYPE = "Q";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"1","TOKEN":"' + TOKEN + '"}';
+
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        $.each(dataArray.Data, function (idx, obj) {
+                            i += 1;
+
+                            var arrRow = [];
+                            var IDX = obj.IDX; 
+                            var U_Id = obj.U_Id;
+                            U_Ids.push(U_Id);
+                            var U_Pwd = obj.U_Pwd;
+                            var U_Name = obj.U_Name;
+                            var Org = obj.Org;
+                            var U_Tel = obj.U_Tel;
+                            var U_Email = obj.U_Email;
+                            var U_Permit = obj.U_Permit;
+                            var U_Enable = obj.U_Enable;
+                            var U_Ctime = obj.U_Ctime;
+                            var U_Ltime = obj.U_Ltime;
+
+                            if (U_Tel == null) { U_Tel = '' }
+                            if (U_Email == null) { U_Email = '' }
+                            if (Org == null) { Org = '' }
+
+                            if (U_Ctime == null) { U_Ctime = '無建立時間' }
+                            if (U_Ltime == null) { U_Ltime = '無登入時間' }
+                           
+                            var buttons =
+                                "   <div class='d-flex justify-content-between'>"+
+                                "   <button type='button' class='btn btn-sm p-1 btn-primary w-100 rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Modify_User('" + IDX + "')\">" +
+                                //"        <i class='bi bi-pen-fill text-light'></i>" +
+                                "   修改資料</button>" +
+                                //"   <button type='button' class='btn btn-sm p-1 bg-danger rounded-0' data-bs-toggle='modal' data-bs-target='#ModalP00' onclick=\"Del_User('" + IDX + "')\">" +
+                                //"        <i class='bi bi-trash text-light'></i>" +
+                                "   </button>" +
+                                "   </div>"+
+                                "   <button type='button' class='btn bg-secondary text-light btn-sm w-100 mt-1 rounded-0' onclick=\"Modify_User_Pwd('" + IDX + "')\">修改密碼</button>"
+                                    
+
+                            //arrRow.push('<input id="txt_U_Email_' + IDX + '"  type="text" class="fs-6 form-control U_Email" value="' + U_Email + '" placeholder="請輸入EMAIL">');
+                          
+
+
+                            arrRow.push(U_Id+'('+U_Name+')');
+                            arrRow.push('<input id="txt_U_Name_' + IDX + '"  type="text"  class="fs-6 form-control U_Name" value="' + U_Name + '" placeholder="請輸入帳號名稱" maxlength="10">');
+                            arrRow.push('<input id="txt_Org_' + IDX + '"  type="text" class="fs-6 form-control Org" value="' + Org + '" placeholder="請輸入公司/組織名稱" maxlength="15">');
+                            arrRow.push('<input id="txt_U_Tel_' + IDX + '"  type="text" class="fs-6 form-control U_Tel" value="' + U_Tel + '" placeholder="請輸入連絡電話" maxlength="10">');
+                            arrRow.push('<input id="txt_U_Email_' + IDX + '"  type="text" class="fs-6 form-control U_Email" value="' + U_Email + '" placeholder="請輸入EMAIL" maxlength="50">');
+                            //arrRow.push(U_Permit);
+                            var sel_U_Permit = '<select  id="txt_U_Permit_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                               '   <option value="">請選擇</option>' +
+                                               '   <option value="2">查詢</option>' +
+                                               '   <option value="1">編修</option>' +
+                                               '</select>'
+                            switch (U_Permit)
+                            {
+                                case 1:
+                                    sel_U_Permit = '<select  id="txt_U_Permit_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                                   '   <option value="2">查詢</option>' +
+                                                   '   <option value="1" selected>編修</option>' +
+                                                   '</select>';
+                                    break;
+                                case 2:
+                                    sel_U_Permit = '<select  id="txt_U_Permit_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                                   '   <option value="2" selected>查詢</option>' +
+                                                   '   <option value="1">編修</option>' +
+                                                   '</select>';
+                                    break;
+                            }
+                            arrRow.push(sel_U_Permit)
+
+                            //arrRow.push(U_Enable);
+
+                            var sel_U_Enable = '<select  id="txt_U_Enable_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                               '   <option value="0">停用</option>' +
+                                               '   <option value="1">啟用</option>' +
+                                               '</select>';
+
+                            switch (U_Enable)
+                            {
+                                case 0:
+                                    sel_U_Enable = '<select  id="txt_U_Enable_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                                   '   <option value="0" selected>停用</option>' +
+                                                   '   <option value="1">啟用</option>' +
+                                                   '</select>';
+                                    break;
+                                case 1:
+                                    sel_U_Enable = '<select  id="txt_U_Enable_' + IDX + '" class="form-select" aria-label="Default select example">' +
+                                                   '   <option value="0">停用</option>' +
+                                                   '   <option value="1" selected>啟用</option>' +
+                                                   '</select>';
+                                    break;
+                            }
+                            arrRow.push(sel_U_Enable);
+
+                            /*arrRow.push(U_Ctime +'<br/>'+ U_Ltime);*/
+                      
+
+                            /*密碼修改*/
+                            var inputPwd = '<input id="txt_U_Pwd_1_' + IDX + '"  type="password" class="form-control U_Pwd_1 fs-6"   placeholder="請輸入密碼1" maxlength="50">' +
+                                           '<input id="txt_U_Pwd_2_' + IDX + '"  type="password" class="form-control U_Pwd_2 fs-6"   placeholder="請輸入密碼2" maxlength="50">';
+
+                            arrRow.push(inputPwd);
+
+                            arrRow.push(buttons);
+                             
+                            tb_User_Data.push(arrRow);
+
+                            if (i == dataArray.Data.length) {
+                                var arrRow = [];
+                                arrRow.push('<input id="txt_U_Id_New"  type="text"  class="form-control U_Id"  placeholder="請輸入帳號ID" maxlength="10">');
+                                arrRow.push('<input id="txt_U_Name_New"  type="text"  class="form-control U_Name"   placeholder="請輸入帳號名稱" maxlength="10">');
+                                arrRow.push('<input id="txt_Org_New"  type="text" class="form-control Org"  placeholder="請輸入公司/組織名稱" maxlength="15">');
+                                arrRow.push('<input id="txt_U_Tel_New"  type="text" class="form-control U_Tel"   placeholder="請輸入連絡電話" maxlength="10">');
+                                arrRow.push('<input id="txt_U_Email_New"  type="text" class="form-control U_Email" value="' + U_Email + '" placeholder="請輸入EMAIL" maxlength="50">');
+                                var sel_U_Permit_New = '<select  id="txt_U_Permit_New" class="form-select" aria-label="Default select example">' +
+                                      '   <option value="2" selected>查詢</option>' +
+                                      '   <option value="1">編修</option>' +
+                                      '</select>'
+                                arrRow.push(sel_U_Permit_New);
+                                var sel_U_Enable_New = '<select  id="txt_U_Enable_New" class="form-select" aria-label="Default select example">' +
+                                                   '   <option value="0">停用</option>' +
+                                                   '   <option value="1">啟用</option>' +
+                                                   '</select>';
+                                arrRow.push(sel_U_Enable_New);
+                                arrRow.push("--");
+
+                                var inputPwd_New = '<input id="txt_U_Pwd_1_New"  type="password" class="form-control txt_U_Pwd_1_New"   placeholder="請輸入密碼1" maxlength="50">' +
+                                               '<input id="txt_U_Pwd_2_New"  type="password" class="form-control txt_U_Pwd_2_New"   placeholder="請輸入密碼2" maxlength="50">';
+
+                                arrRow.push(inputPwd_New);
+                                arrRow.push('<button type="button" class="btn btn-danger  btn-sm" onclick="Add_User()">新增帳號</button>');
+                                tb_User_Data.push(arrRow);
+                            }
+
+                        });
+
+                        putData(tb_User, tb_User_Data)
+                        $('#mask_Query').fadeOut(200);
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+
+            })
+
+
+        }
+
+        function Modify_User(idx)
+        {
+            var txt_U_Name = $('#txt_U_Name_' + idx).val();
+            var txt_Org = $('#txt_Org_' + idx).val();
+            var txt_U_Tel = $('#txt_U_Tel_' + idx).val();
+            var txt_U_Email = $('#txt_U_Email_' + idx).val();
+            var txt_U_Permit = $('#txt_U_Permit_' + idx).val();
+            var txt_U_Enable = $('#txt_U_Enable_' + idx).val();
+            
+
+            //alert(txt_U_Name + ',' + txt_Org + ',' + txt_U_Tel + ',' + txt_U_Email + ',' + txt_U_Permit + ',' + txt_U_Enable)
+            
+            
+
+            var statu = confirm("您確定【修改】【帳號】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "USER_MODIFY";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '","U_Name":"' + txt_U_Name + '","Org":"' + txt_Org + '","U_Tel":"' + txt_U_Tel + '","U_Email":"' + txt_U_Email + '","U_Permit":"' + txt_U_Permit + '","U_Enable":"' + txt_U_Enable + '"}';
+
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_UserDT();
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+             
+            
+        }
+
+        function Del_User(idx)
+        {
+             
+
+        }
+
+        function Modify_User_Pwd(idx)
+        {
+            var txt_U_Pwd_1 = $('#txt_U_Pwd_1_' + idx).val();
+            var txt_U_Pwd_2 = $('#txt_U_Pwd_2_' + idx).val();
+
+            var Message = '';
+            if (txt_U_Pwd_1 == '' || txt_U_Pwd_2 == '') {
+                Message+='【密碼 1 與密碼 2 密碼不可空白】';
+               
+            }
+            if (txt_U_Pwd_1.length <10)
+            {
+                Message += '【密碼 必須大於10 碼】';
+            }
+            if (txt_U_Pwd_1 != txt_U_Pwd_2)
+            {
+                Message += '【密碼 1 與密碼 2 輸入密碼不相同】'
+               
+            }
+            if (Message != '')
+            {
+                alert(Message);
+                return false;
+            }
+
+
+            var statu = confirm("您確定【修改】【密碼】嗎？");
+            if (!statu) {
+                return false;
+            }
+
+            var TOKEN = sessionStorage.getItem('token');
+
+            var FUN_NAME = "USER_MODIFY_PWD";//必要參數 預存程序名稱
+            var TYPE = "U";//必要參數 類型 Q:查詢 I:新增  U:更新  L:登入取授權
+
+            var PA = '{' +
+              '"FUNCTION_NAME":"' + FUN_NAME + '","TYPE":"' + TYPE + '","PUBLIC":"0","TOKEN":"' + TOKEN + '","IDX":"' + idx + '","U_Pwd":"' + txt_U_Pwd_1 + '"}';
+
+            $.ajax({
+                url: './service.ashx',
+                type: 'POST',
+                data: PA,
+                dataType: "json",
+                success: function (dataJS) {
+                    console.log(dataJS);
+                    var dataArray = dataJS;
+
+                    var Message_Code = dataArray.Message[0].Message_Code;
+                    var Message_Content = dataArray.Message[0].Message_Content;
+                    if (Message_Code == '1') {
+                        var i = 0;
+                        alert(Message_Content);
+                        get_UserDT();
+                    }
+                    else {
+                        alert(Message_Content);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                }
+
+            })
+
+             
+           
+        }
+
+        /*共用*/
+        function putData(tb_object, data) {
+
+            tb_object.clear();
+            tb_object.rows.add(data).draw();
+            $('#mask_Query').fadeOut(300);
+        }
+
+
+        function checkTokenTimeOut()
+        {
+            if (sessionStorage.getItem('token') == null)
+            {
+                top.location.href = "tjpzep_00_signin.html";
+                alert('權限不足或尚未登入');
+                return false;
+            }
+            else
+            {
+
+
+            }
+        }
+    </script>
+
+    
+</head>
+<body>
+    <div class="mask_Query" id="mask_Query">
+        <button class="centered" style="font-size: x-large; color: black">
+            <!--<img src="icon/loading.gif" />-->
+            <span class="sr-only">執行中...</span>
+        </button>
+    </div>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+        <div class="spinner-grow text-dark m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+        <div class="spinner-grow text-secondary m-1" role="status">
+            <span class="sr-only">載入中...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-light ps-5 pe-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-6 col-sm-12 text-center text-lg-end  mb-2 mb-lg-0">
+                <div class="position-relative d-inline-flex align-items-center bg-primary text-white top-shape px-5">
+                    <div class="py-1">
+                        <a onclick="logout()"><p class="m-0"><small><font id="u_name"></font> 您好 <i class="bi bi-person-circle me-1"></i>登出</small></p></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm px-5 py-3 py-lg-0">
+        <a href="index.html" class="navbar-brand p-0">
+            <img src="img/logo.svg" alt="網站logo"><h1 class="d-none">土重處土城司法園區區段徵收公共工程-管理平台</h1>
+        </a>
+        <h1>管理平台</h1>
+    </nav>
+
+
+    <!-- Navbar End -->
+    <!-- Full Screen Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center">
+                    <div class="input-group" style="max-width: 600px;">
+                        <input type="text" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
+                        <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Full Screen Search End -->
+    <!-- Contact Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="row g-5 mb-5">
+                <div class="mt-4 mx-auto form-signin text-center wbg">
+                    <div class="mb-2">
+                        <input type="button" id="A_News" class="btn btn-primary py-md-3 px-md-5 me-3 mb-2 animated rounded-pill" onclick="setFunction('news')" value="最新消息"/>
+                        <input type="button" id="A_Proj" class="btn btn-primary py-md-3 px-md-5 me-3 mb-2 animated rounded-pill" onclick="setFunction('proj')" value="計畫進度"/>
+                        <input type="button" id="A_Pic" class="btn btn-primary py-md-3 px-md-5 me-3 mb-2 animated rounded-pill" onclick="setFunction('pic')" value="照片管理"/>
+                        <input type="button" id="A_Account" class="btn btn-secondary py-md-3 px-md-5 me-3 mb-2 animated rounded-pill" onclick="setFunction('account')" value="帳號管理"/>
+                    </div>
+                    <!--消息管理-->
+                    <div id="div_News" style="width:100%;" >
+                        <table id="news_table" class="table display table-striped table-bordered text-start MyTable w-100 text-light" style="table-layout:fixed;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">日期</th>
+                                    <th scope="col">標題</th>
+                                    <th scope="col">內容</th>
+                                    <th scope="col">檔案</th>
+                                    <th scope="col">編輯</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">2022-05-05</th>
+                                    <td><p class="fw-bold">土城司法園區再公展案 新北都委會審議通過</p></td>
+                                    <td>
+                                        <p class="truncate">
+                                            營建署表示，為配合土城彈藥庫搬遷並解除禁限建管制，同時因應法務部矯正署與司法單位等機關搬遷、國道三號增設北土城交流道用地及預留社會住宅興建空間等重大建設，由內政部擔任土城司法園區用地取得的開發主體，營建署城鄉發展分署負責土城司法園區都市計畫變更案之都市計畫規劃與推動工作。
+                                            本案於一一○年八月卅一日經內政部都市計畫委員會第九九七次會議審議後，併同細部計畫於一一○年十一月卅日辦理再公開展覽程序，主要計畫再公開展覽內容於一一一年三月十八日經新北市都委會審議通過，將提送內政部都委會再行審議，細部計畫正由新北市都委會持續審議。
+                                            營建署表示，全案若能盡早完成審議，以利後續都市計畫發布實施及辦理區段徵收相關事宜，讓計畫邁入下一階段。
+                                        </p>
+                                    </td>
+                                    <td><a href="aaa.pdf">檔名</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm p-1 bg-primary" data-bs-toggle="modal" data-bs-target="#ModalP01">
+                                            <i class="bi bi-pen-fill text-light text-center"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm p-1 bg-danger text-end" data-bs-toggle="modal" data-bs-target="#ModalP01">
+                                            <small><i class="bi bi-trash3 text-light"></i></small>
+                                        </button>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!--消息管理-新增修改-->
+                        <div id="overlay_news">
+                            <div id="popup_news" style="border-radius: 10px">
+                                <div id="close_news" class="btn-close"></div>
+                                <h2 id="pop_news_title">最新消息  新增/修改</h2>
+                                <input id="Modify_News_IDX" type="hidden">                               
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">標題</span>
+                                            <input type="text" class="form-control" id="txt_Modify_N_Title" placeholder="請輸入內容" aria-label="txt_Modify_N_Title" aria-describedby="basic-addon1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">日期</span>
+                                            <input type="date" id="txt_Modify_N_Date" placeholder="2014-09-18">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-sm-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">內容</span>
+                                            <input type="text" class="form-control" id="txt_Modify_N_Text" placeholder="請輸入內容" aria-label="txt_Modify_N_Text" aria-describedby="basic-addon1">
+                                        </div>
+                                        <div class="input-group mb-3 mt-2">
+                                            <span class="input-group-text" id="basic-addon2">網址</span>
+                                            <input type="text" class="form-control" id="txt_Modify_N_Url" placeholder="請輸入網址" aria-label="txt_Modify_N_Url" aria-describedby="basic-addon2">
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon2">附件上傳</span>
+                                            <input type="text" class="form-control" id="txt_NEWS_FILE_TITLE" placeholder="請輸入檔案標題" aria-label="txt_NEWS_FILE_TITLE" aria-describedby="basic-addon2">
+                                            <span class="input-group-text d-none" id="basic-addon2"></span>
+
+                                            <input type="file" id="NewsfileUpload" class="file-upload" name="NewsfileUpload" hidden>
+                                            <label for="NewsfileUpload" class="btn btn-dark rounded-end">選擇檔案</label>
+
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <div class="d-block label label-default" id="fileNameNews"></div>
+                                            <div class="col-12 text-start mt-3">
+
+                                                <input class="btn btn-primary me-3" id="btn_Upoad_News_File" value="確定上傳" onclick="uploadNewsFile()" type="submit">
+                                                <input class="btn btn-primary me-3" id="btn_Modify_New" value="確定修改" onclick="cmd_Sure_Modify_New()" type="submit">
+                                                <input class="btn btn-secondary" id="btn_Add_New" value="新增消息" onclick="cmd_Sure_Add_New()" type="submit">
+
+                                            </div>
+                                        </div>
+                                        <script>
+                                            document.getElementById('NewsfileUpload').addEventListener('change', function () {
+                                                let fileNameNews = this.files[0] ? this.files[0].name : '未選擇檔案';
+                                                document.getElementById('fileNameNews').textContent = '選擇的檔案: ' + fileNameNews;
+                                            });
+
+                                            function uploadNewsFile() {
+                                                if ($("#NewsfileUpload").val() == "") {
+                                                    document.getElementById('fileNameNews').textContent = "未選擇檔案";
+                                                    return;
+                                                }
+                                                var idx = $('#Modify_News_IDX').val();
+                                                var title = $('#txt_NEWS_FILE_TITLE').val();
+                                                if (title == "") {
+                                                    alert("請輸入【檔案標題】");
+                                                    return;
+                                                }
+
+
+                                                var data = document.getElementById('NewsfileUpload');
+
+                                                var fileData = new FormData();
+                                                fileData.append(data.files[0].name, data.files[0]);
+
+                                                $.ajax({
+                                                    url: "./fileUpload.ashx?key=news&idx=" + idx + "&title=" + title,
+                                                    type: "post",
+                                                    data: fileData,
+                                                    contentType: false,
+                                                    processData: false,
+                                                    async: false,
+                                                    success: function (response) {
+                                                        document.getElementById('fileNameNews').textContent = response;
+                                                        //document.getElementById('fileNameNews').textContent += ',上傳成功';
+                                                        //$("#NewsfileUpload").val('');
+                                                        document.getElementById("NewsfileUpload").value = "";
+                                                    },
+                                                    error: function (response) {
+                                                        alert('error: ' + response);
+                                                    }
+                                                });
+
+                                                Modify_Pic(idx);
+                                            }
+
+                                        </script>
+                                    </div>
+
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12  text-start">
+                                        <h5 class="text-primary fw-bold border-bottom">消息檔案清單</h5>
+                                        <div id="fileList"></div>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--進度管理-->
+                    <div id="div_Proj">
+                        <table id="schedule_table" class="table display table-striped table-bordered text-start MyTable w-100 text-light" style="table-layout:fixed;">                                                    
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">年度-月份</th>
+                                    <th scope="col">預計進度</th>
+                                    <th scope="col">實際進度</th>
+                                    <th scope="col">修改時間</th>
+                                    <th scope="col">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                        <!--進度管理-新增修改-->
+                        <div id="overlay_proj">
+                            <div id="popup_proj" style="border-radius: 10px">
+                                <div id="close_proj" class="btn-close"></div>
+                                <h2>This is a popup_proj</h2>
+                                <p>You just triggered a popup_proj</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--影像管理-->
+                    <div id="div_Pic">
+                        <table id="pics_table" class="table display table-striped table-bordered text-start MyTable w-100 text-light" style="table-layout:fixed;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">影像類別</th>
+                                    <th scope="col">分項工程/標題</th>
+                                    <th scope="col" >內文</th>
+                                    <th scope="col">日期</th>
+                                    <th scope="col">檔案</th>
+                                    <th scope="col">編輯</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                        <!--影像管理-新增修改-->
+                        <div id="overlay_pic">
+                            
+                            <div id="popup_pic" class="px-4" style="border-radius: 10px">
+                                <div id="close_pic" class="btn-close"></div>
+                                <h2 id="pop_pic_title" class="my-3">影像管理 新增/修改</h2>
+                                <input id="Modify_GALLERY_IDX" type="hidden">
+                                <div class="row mt-2">
+                                    <div class="col-md-6"><div class="input-group mb-3">
+                                        <span class="input-group-text" id="basic-addon1">影像類別</span>
+                                        <!--<input type="text" class="form-control" id="txt_Modify_GALLERY_TYPE" placeholder="影像類別" aria-label="txt_GALLERY_TYPE" aria-describedby="basic-addon1">-->
+                                        <select id="txt_Modify_GALLERY_TYPE" class="form-select form-select-sm mb-0">
+                                            <option value="">--請選擇--</option>
+                                            <option value="PROJECT">施工影像</option>
+                                            <option value="BASIC">基本資料</option>
+                                            <option value="MEETING">會議影像</option>
+                                            <option value="AIR">空拍影像</option>
+                                        </select>
+                                    </div></div>
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">分項工程/標題</span>
+                                            <input type="text" class="form-control" id="txt_Modify_GALLERY_TILTE" placeholder="請輸入標題" aria-label="txt_Modify_GALLERY_TILTE" aria-describedby="basic-addon1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-sm-6">
+                                        <div class="input-group mb-4">
+                                            <span class="input-group-text" id="basic-addon1">內文</span>
+                                            <input type="text" class="form-control" id="txt_Modify_GALLERY_TEXT" placeholder="請輸入內文" aria-label="txt_GALLERY_TEXT" aria-describedby="basic-addon1">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">日期</span>
+                                            <input type="date" id="txt_Modify_GALLERY_DATE" placeholder="2014-09-18">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">圖檔上傳</span>
+                                            <input type="text" class="form-control" id="txt_GALLERY_FILE_TITLE" placeholder="請輸入檔案標題" aria-label="txt_GALLERY_FILE_TITLE" aria-describedby="basic-addon1">
+                                            <span class="input-group-text d-none" id="basic-addon1"></span>
+
+                                            <input type="file" id="fileUpload" class="file-upload" name="fileUpload" accept="image/*" hidden>
+                                            <label for="fileUpload" class="btn btn-dark rounded-end">選擇檔案</label>
+
+                                            <div class="input-group mb-3">
+                                                <div class="d-block label label-default" id="fileNameGallery"></div>
+                                                <div class="col-12 text-start mt-3">
+
+                                                    <input class="btn btn-primary me-3" id="btn_Upoad_Gallery_Img" value="確定上傳" onclick="uploadGalleryImage()" type="submit">
+                                                    <input class="btn btn-primary me-3" id="btn_Modify_Pic" value="確定修改" onclick="cmd_Sure_Modify_Gallery()" type="submit">
+                                                    <input class="btn btn-secondary" id="btn_Add_Pic" value="確定新增" onclick="cmd_Sure_Add_Gallery()" type="submit">
+
+                                                </div>
+                                            </div>
+                                            <script>
+                                                document.getElementById('fileUpload').addEventListener('change', function () {
+                                                    let fileNameGallery = this.files[0] ? this.files[0].name : '未選擇檔案';
+                                                    document.getElementById('fileNameGallery').textContent = '選擇的檔案: ' + fileNameGallery;
+                                                });
+
+                                                function uploadGalleryImage() {
+                                                    if ($("#fileUpload").val() == "") {
+                                                        document.getElementById('fileNameGallery').textContent = "未選擇檔案";
+                                                        return;
+                                                    }
+                                                    var idx = $('#Modify_GALLERY_IDX').val();
+                                                    var title = $('#txt_GALLERY_FILE_TITLE').val();
+                                                    if (title == "") {
+                                                        alert("請輸入【檔案標題】");
+                                                        return;
+                                                    }
+
+
+                                                    var data = document.getElementById('fileUpload');
+
+                                                    var fileData = new FormData();
+                                                    fileData.append(data.files[0].name, data.files[0]);
+
+                                                    $.ajax({
+                                                        url: "./fileUpload.ashx?key=gallery&idx=" + idx + "&title=" + title,
+                                                        type: "post",
+                                                        data: fileData,
+                                                        contentType: false,
+                                                        processData: false,
+                                                        async: false,
+                                                        success: function (response) {
+                                                            document.getElementById('fileNameGallery').textContent = response;
+                                                            //document.getElementById('fileNameGallery').textContent += ',上傳成功';
+                                                            $("#fileUpload").val('');
+                                                        },
+                                                        error: function (response) {
+                                                            alert('error: ' + response);
+                                                        }
+                                                    });
+
+                                                    Modify_Pic(idx);
+                                                }
+
+                                            </script>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                                                       
+                                    
+                                    <div class="col-12  text-start">
+                                        <h5 class="text-primary fw-bold border-bottom">影像清單</h5>
+                                        <div id="imgList" ></div>
+                                    </div>
+                                </div>                                                                                        
+    
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--帳號管理-->
+                    <div id="div_Account"> 
+                        <table id="user_table" class="table display table-striped table-bordered text-start MyTable w-100 text-light" style="table-layout:fixed;">                            
+                            <thead class="table-dark fs-6">
+                                <tr>
+                                    <th scope="col">帳號ID</th>
+                                    <th scope="col">帳號名稱</th>
+                                    <th scope="col">公司/組織</th>
+                                    <th scope="col">連絡電話</th>
+                                    <th scope="col">EMAIL</th>
+                                    <th scope="col">使用權限</th>
+                                    <th scope="col">啟用狀態</th>
+                                    <!--<th scope="col">建立時間<BR>登入時間</th>-->
+                                    <th scope="col">密碼修改</th>
+                                    <th scope="col">操作</th> 
+                                   
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                        <div id="overlay_account">
+                            <div id="popup_account" style="border-radius: 10px">
+                                <div id="close_account" class="btn-close"></div>
+                                <h2>This is a popup_account</h2>
+                                <p>You just triggered a popup_account</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    
+    <!-- Contact End -->
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light py-5 wow fadeInUp" data-wow-delay="0.3s">
+        <div class="container pt-2">
+            <div class="row g-5 pt-0">
+                <div class="col-lg-6">
+                    <!--<h3 class="text-white mb-4">聯絡我們</h3>-->
+                    <p class="mb-2 text-white">
+                        <i class="bi bi-person-gear text-primary me-2"></i>
+                        網站設計及維運單位：中興工程顧問股份有限公司
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <!--<h3 class="text-white mb-4"></h3>-->
+                    <!--<p class="mb-2">
+                        <i class="bi bi-buildings text-primary me-2"></i>
+                        工程委託單位：<a target="_blank" class="text-white border-bottom" href="https://www.lceb.gov.tw/">內政部土地重劃工程處</a>
+                    </p>-->
+                    <p class="mb-2"><i class="bi bi-buildings text-primary me-2"></i>工程委託單位：內政部土地重劃工程處</p>
+                    <p class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i>408205臺中市南屯區黎明路二段503號4樓</p>
+                    <p class="mb-2"><i class="bi bi-envelope-open text-primary me-2"></i>lceb@mail.lceb.gov.tw</p>
+                    <p class="mb-2"><i class="bi bi-telephone text-primary me-2"></i>04-2252-4985(代表號)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/twentytwenty/jquery.event.move.js"></script>
+    <script src="lib/twentytwenty/jquery.twentytwenty.js"></script>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    
+</body>
+
+
+</html>

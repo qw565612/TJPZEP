@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <style>
+        #img {
+            height: 500px;
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <label for="selfie">Take a picture of your face:</label>
+    <input type="file" id="imgInput" name="selfie" accept="image/*" capture="user" />
+    <button onclick="getExifInfo()">取得圖片資訊</button>
+    <br>
+    <img src="" id="img" />
+    <textarea id="dataArea" rows="50" cols="100"></textarea>
+    <!--<label for="picture">Take a picture using back facing camera:</label>
+    <input type="file"
+           id="picture"
+           name="picture"
+           accept="image/*"
+           capture="environment" />-->
+
+    <script>
+    function getExifInfo() {
+        console.log("执行...");
+        EXIF.getData(document.getElementById('img'), function () {
+            document.getElementById('dataArea').innerText = JSON.stringify(EXIF.getAllTags(this), null, "\t");
+            console.log(JSON.stringify(EXIF.getAllTags(this), null, "\t"));
+        });
+    }
+
+    // 参考：https://blog.csdn.net/qq_38789941/article/details/95309081
+    document.querySelector('#imgInput').onchange = function () {
+        if (this.files.length) {
+            let file = this.files[0];
+            let reader = new FileReader();
+            //新建 FileReader 对象
+            reader.onload = function () {
+                // 当 FileReader 读取文件时候，读取的结果会放在 FileReader.result 属性中
+                document.querySelector('#img').src = this.result;
+                //document.querySelector('#text').innerHTML = this.result;
+            };
+            // 设置以什么方式读取文件，这里以base64方式
+            reader.readAsDataURL(file);
+        }
+    }
+    </script>
+</body>
+</html>

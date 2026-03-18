@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+此檔案是由您 Web 專案的發行/封裝處理程序所使用。您可以編輯此 MSBuild 檔案，
+以自訂此處理程序的行為。若要深入了解，請造訪 http://go.microsoft.com/fwlink/?LinkID=208121。
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>D:\Publish\SERVICE_TJPZEP</_PublishTargetUrl>
+    <History>True|2025-03-11T07:15:16.7733197Z;True|2025-03-11T14:38:56.2321307+08:00;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="01_news.html">
+      <publishTime>10/19/2024 08:43:14</publishTime>
+    </File>
+    <File Include="02_origin.html">
+      <publishTime>11/02/2024 11:10:54</publishTime>
+    </File>
+    <File Include="031_eco.html">
+      <publishTime>11/02/2024 09:49:14</publishTime>
+    </File>
+    <File Include="03_about.html">
+      <publishTime>11/02/2024 09:19:44</publishTime>
+    </File>
+    <File Include="04_chart.html">
+      <publishTime>11/02/2024 11:28:05</publishTime>
+    </File>
+    <File Include="051_mgallery.html">
+      <publishTime>11/01/2024 10:25:25</publishTime>
+    </File>
+    <File Include="052_pgallery.html">
+      <publishTime>11/01/2024 15:46:49</publishTime>
+    </File>
+    <File Include="053_agallery.html">
+      <publishTime>11/01/2024 10:25:25</publishTime>
+    </File>
+    <File Include="05_gallery.html">
+      <publishTime>11/01/2024 11:25:29</publishTime>
+    </File>
+    <File Include="071_newsm.html">
+      <publishTime>10/26/2024 10:43:35</publishTime>
+    </File>
+    <File Include="074_account.html">
+      <publishTime>10/26/2024 10:45:00</publishTime>
+    </File>
+    <File Include="07_admin.html">
+      <publishTime>10/19/2024 08:23:29</publishTime>
+    </File>
+    <File Include="ApplicationInsights.config">
+      <publishTime>10/08/2024 09:29:37</publishTime>
+    </File>
+    <File Include="bin/ApplicationInsights.config">
+      <publishTime>10/08/2024 09:29:37</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
+      <publishTime>12/07/2015 19:04:38</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.DependencyCollector.dll">
+      <publishTime>03/10/2016 14:26:18</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.PerfCounterCollector.dll">
+      <publishTime>03/10/2016 14:26:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.ServerTelemetryChannel.dll">
+      <publishTime>03/09/2016 12:00:14</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Web.dll">
+      <publishTime>03/10/2016 14:26:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.WindowsServer.dll">
+      <publishTime>03/10/2016 14:26:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.ApplicationInsights.dll">
+      <publishTime>03/09/2016 11:57:34</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>06/15/2015 02:06:24</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>03/08/2023 07:09:56</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:44</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/SERVICE_TJPZEP.dll">
+      <publishTime>03/11/2025 15:15:16</publishTime>
+    </File>
+    <File Include="bin/SERVICE_TJPZEP.pdb">
+      <publishTime>03/11/2025 15:15:16</publishTime>
+    </File>
+    <File Include="bin/SqlTool.dll">
+      <publishTime>08/16/2023 11:12:32</publishTime>
+    </File>
+    <File Include="bin/SqlTool.pdb">
+      <publishTime>08/16/2023 11:12:32</publishTime>
+    </File>
+    <File Include="css/bootstrap.min.css">
+      <publishTime>10/19/2024 07:19:21</publishTime>
+    </File>
+    <File Include="fileUpload.ashx">
+      <publishTime>11/11/2024 14:34:58</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>10/08/2024 09:29:31</publishTime>
+    </File>
+    <File Include="index.html">
+      <publishTime>10/31/2024 20:15:39</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>10/08/2024 10:20:16</publishTime>
+    </File>
+    <File Include="scripts/ai.0.22.9-build00167.js">
+      <publishTime>10/19/2024 07:02:24</publishTime>
+    </File>
+    <File Include="scripts/ai.0.22.9-build00167.min.js">
+      <publishTime>10/19/2024 07:02:25</publishTime>
+    </File>
+    <File Include="service.ashx">
+      <publishTime>10/08/2024 09:30:16</publishTime>
+    </File>
+    <File Include="TEST.html">
+      <publishTime>10/09/2024 16:23:18</publishTime>
+    </File>
+    <File Include="tjpzep_00_default.html">
+      <publishTime>11/05/2024 15:28:02</publishTime>
+    </File>
+    <File Include="tjpzep_00_signin.html">
+      <publishTime>10/31/2024 23:46:59</publishTime>
+    </File>
+    <File Include="tjpzep_01_news.html">
+      <publishTime>11/05/2024 15:29:29</publishTime>
+    </File>
+    <File Include="tjpzep_02_origin.html">
+      <publishTime>11/05/2024 15:28:19</publishTime>
+    </File>
+    <File Include="tjpzep_031_eco.html">
+      <publishTime>11/05/2024 15:28:27</publishTime>
+    </File>
+    <File Include="tjpzep_03_about.html">
+      <publishTime>11/05/2024 16:12:11</publishTime>
+    </File>
+    <File Include="tjpzep_04_chart.html">
+      <publishTime>02/20/2025 13:38:55</publishTime>
+    </File>
+    <File Include="tjpzep_051_mgallery.html">
+      <publishTime>11/05/2024 15:29:12</publishTime>
+    </File>
+    <File Include="tjpzep_052_pgallery.html">
+      <publishTime>11/05/2024 15:29:12</publishTime>
+    </File>
+    <File Include="tjpzep_053_agallery.html">
+      <publishTime>02/19/2025 14:16:50</publishTime>
+    </File>
+    <File Include="tjpzep_05_gallery.html">
+      <publishTime>11/05/2024 15:28:52</publishTime>
+    </File>
+    <File Include="tjpzep_07_admin.html">
+      <publishTime>11/13/2024 13:31:51</publishTime>
+    </File>
+    <File Include="tjpzep_index.html">
+      <publishTime>11/05/2024 16:07:04</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>03/11/2025 15:15:16</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
