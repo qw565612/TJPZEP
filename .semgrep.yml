@@ -1,0 +1,9 @@
+# 這會強制 Semgrep 使用官方針對 C# 的所有安全掃描規則
+rules:
+  - id: official-csharp-security-scan
+    extends:
+      - p/csharp
+      - p/security-audit
+      - p/secrets
+    languages: [csharp]
+    severity: ERROR
